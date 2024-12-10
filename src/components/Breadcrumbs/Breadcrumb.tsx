@@ -2,7 +2,7 @@ import Link from "next/link";
 
 interface BreadcrumbItem {
   name: string;
-  href?: string; // Đường dẫn, optional cho các mục không cần link
+  href?: string; 
 }
 
 interface BreadcrumbProps {
@@ -11,7 +11,7 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb = ({ pageName, items }: BreadcrumbProps) => {
-  // Nếu `items` không được truyền, dùng `pageName` để tạo cấu trúc mặc định
+
   const breadcrumbs = items || [{ name: "Dashboard", href: "/" }, { name: pageName || "" }];
 
   return (

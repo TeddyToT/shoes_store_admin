@@ -8,17 +8,17 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { Contexts } from "@/app/Contexts";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-const AddCategory = () => {
+const AddBrand = () => {
 
-  const {fetchCategories}:any = useContext(Contexts)
-  const [categoryName, setCategoryName] = useState("");
+  const {fetchManufacturers}:any = useContext(Contexts)
+  const [brandName, setBrandName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!categoryName) {
+    if (!brandName) {
     
-      toast.warning("Please enter category name", {
+      toast.warning("Hãy nhập tên hãng", {
         position: "top-right",
         autoClose: 1500
       })
@@ -26,13 +26,13 @@ const AddCategory = () => {
     }
     setIsLoading(true);
 
-    fetch("http://localhost/be-shopbangiay/api/category.php", {
+    fetch("http://localhost/be-shopbangiay/api/manufacturer.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: categoryName
+        name: brandName
       }),
     })
       .then((res) => res.json())
@@ -41,15 +41,15 @@ const AddCategory = () => {
           console.log(data);
           if (data.name)
           {
-            toast.success("Add category successfully", {
+            toast.success("Thêm hãng thành công", {
               position: "top-right",
               autoClose: 2000,
             });
-            fetchCategories()
-            router.push("/product/category"); 
+            fetchManufacturers()
+            router.push("/product/brand"); 
           }
           else{
-            toast.error("Add category failed", {
+            toast.error("Thêm hãng thất bại", {
               position: "top-right",
               autoClose: 2000,
               
@@ -75,8 +75,8 @@ const AddCategory = () => {
       <Breadcrumb
   items={[
     { name: "Dashboard", href: "/" },
-    { name: "Product Category", href: "/product/category" },
-    { name: "Add Category" }
+    { name: "Hãng giày", href: "/product/brand" },
+    { name: "Thêm hãng giày" }
   ]}
 />
       <div className="flex flex-col gap-10">
@@ -85,13 +85,13 @@ const AddCategory = () => {
             <div className="p-6.5">
               <div className="mb-4.5">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Category Name
+                  Tên hãng
                 </label>
                 <input
                   type="text"
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="Enter category name"
+                  value={brandName}
+                  onChange={(e) => setBrandName(e.target.value)}
+                  placeholder="Nhập tên hãng"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
@@ -99,7 +99,7 @@ const AddCategory = () => {
               <button
               onClick={handleSubmit}
                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                Add
+                Thêm
               </button>
             </div>
           </form>
@@ -109,4 +109,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default AddBrand;

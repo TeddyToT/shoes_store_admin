@@ -16,9 +16,9 @@ const ProductOverview = () => {
       
       <Link
               href="/product/overview/add-product"
-              className="mb-3 inline-flex items-center justify-center rounded-full bg-black px-5 py-3 text-center font-normal text-white hover:bg-opacity-90 lg:px-4 xl:px-6"
+              className="mb-3 inline-flex items-center justify-center rounded-full bg-black dark:text-black dark:bg-gray-300 dark:hover:bg-slate-600 dark:hover:text-white px-5 py-3 text-center font-normal text-white hover:bg-opacity-90 lg:px-4 xl:px-6"
             >
-              Add Product
+              Thêm sản phẩm
             </Link>
       <div className="flex flex-col gap-10">
         

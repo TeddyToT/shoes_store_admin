@@ -1,5 +1,5 @@
 "use client";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
@@ -9,27 +9,13 @@ import { Contexts } from "@/app/Contexts";
 import Link from "next/link";
 
 
-const ProductCategoryTable = () => {
+const BrandTable = () => {
    
-  const{categories, fetchCategories}: any = useContext(Contexts)
-  const [searchInput, setSearchInput] = useState("");
-  const [searchCategories, setSearchCategories] = useState([]);
+  const{manufacturers, fetchManufacturers}: any = useContext(Contexts)
+  
   const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    let temp = [];
-    for (let i = 0; i < categories.length; i++) {
-      const searchQuery = searchInput.trim().toLowerCase();
-      const productName = categories[i].name.toLowerCase();
-      const isMatch = productName.includes(searchQuery);
-      if (isMatch) temp.push(categories[i]);
-    }
-    setSearchCategories(temp);
-  }, [categories, searchInput]);
-
-  
-  const totalPages = Math.ceil(searchCategories.length / itemsPerPage);
+  const totalPages = Math.ceil(manufacturers.length / itemsPerPage);
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
@@ -54,22 +40,22 @@ const ProductCategoryTable = () => {
 
   const getPaginatedData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return searchCategories.slice(startIndex, startIndex + itemsPerPage);
+    return manufacturers.slice(startIndex, startIndex + itemsPerPage);
   };
-  const handleDeleteCategory = (categoryID: string) => {
+  const handleDeleteCategory = (manufacturerId: string) => {
     axios
-      .delete("http://localhost/be-shopbangiay/api/category.php",{
-        data: {categoryId: categoryID}
+      .delete("http://localhost/be-shopbangiay/api/manufacturer.php",{
+        data: {manufacturerId: manufacturerId}
       })
       .then((response) => {
         if (response.data.success == true) {
-          toast.success("Xóa category thành công", {
+          toast.success("Xóa hãng thành công", {
             position: "top-right",
             autoClose: 2000
           })
-          fetchCategories();
+          fetchManufacturers();
         } else {
-          toast.error("Xóa category thất bại", {
+          toast.error("Xóa hãng thất bại", {
             position: "top-right",
             autoClose: 2000
           })
@@ -77,7 +63,7 @@ const ProductCategoryTable = () => {
       })
       .catch((error) => {
         console.error("Error deleting product:", error);
-        toast.error("Đã xảy ra lỗi khi xóa category", {
+        toast.error("Đã xảy ra lỗi khi xóa hãng", {
           position: "top-right",
           autoClose: 2000
         })
@@ -93,8 +79,6 @@ const ProductCategoryTable = () => {
             <SearchOutlinedIcon />
           </button>
           <input
-          value={searchInput}
-          onChange={(e)=>setSearchInput(e.target.value)}
             type="text"
             placeholder="Type to search..."
             className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
@@ -108,7 +92,7 @@ const ProductCategoryTable = () => {
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
               <th className="min-w-[220px] px-4 py-4 font-bold text-black dark:text-white xl:pl-11">
-                Tên thể loại
+                Tên hãng
               </th>
               <th className="px-4 py-4 font-bold text-black dark:text-white">
                 Hành động
@@ -116,26 +100,26 @@ const ProductCategoryTable = () => {
             </tr>
           </thead>
           <tbody>
-            {getPaginatedData().map((category:any, key) => (
-              <tr key={category.categoryId}>
+            {getPaginatedData().map((brand:any, key) => (
+              <tr key={brand.manufacturerId}>
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white capitalize">
-                    {category.name}
+                    {brand.name}
                   </h5>
                   
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <Link 
-                    href={`/product/category/edit-category/${category.categoryId}`}
+                    href={`/product/brand/edit-brand/${brand.manufacturerId}`}
                     className="hover:text-primary">
 
                      <ModeEditIcon/>
                     </Link>
                     <button 
                     onClick={() => {
-                      if (window.confirm("Bạn có chắc chắn muốn xóa category này không?")) {
-                        handleDeleteCategory(category.categoryId);
+                      if (window.confirm("Bạn có chắc chắn muốn xóa brand này không?")) {
+                        handleDeleteCategory(brand.manufacturerId);
                       }
                     }}
                     className="hover:text-primary">
@@ -204,4 +188,4 @@ const ProductCategoryTable = () => {
   );
 };
 
-export default ProductCategoryTable;
+export default BrandTable;

@@ -6,8 +6,9 @@ interface OverviewCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
-  orders: { total: number; createdAt: string }[]; // Thêm orders để tính tổng doanh thu
+  orders: { totalPrice: string | number; orderDate: string }[];
 }
+
 
 const OverviewRevenue: React.FC<OverviewCardProps> = ({ title, value, icon, orders }) => {
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString()); // Mặc định là năm hiện tại
@@ -17,35 +18,36 @@ const OverviewRevenue: React.FC<OverviewCardProps> = ({ title, value, icon, orde
   // Hàm tính toán doanh thu theo thời gian chọn
   const calculateRevenue = () => {
     let filteredOrders = [...orders];
-
+  
     // Lọc theo năm
     if (selectedYear !== 'all') {
       filteredOrders = filteredOrders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
+        const orderDate = new Date(order.orderDate.replace(" ", "T"));
         return orderDate.getFullYear().toString() === selectedYear;
       });
     }
-
+  
     // Lọc theo tháng
     if (selectedMonth !== 'all') {
       filteredOrders = filteredOrders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
+        const orderDate = new Date(order.orderDate.replace(" ", "T"));
         return orderDate.getMonth() === parseInt(selectedMonth) && orderDate.getFullYear().toString() === selectedYear;
       });
     }
-
+  
     // Lọc theo ngày
     if (selectedDate !== 'all') {
       filteredOrders = filteredOrders.filter((order) => {
-        const orderDate = new Date(order.createdAt);
+        const orderDate = new Date(order.orderDate.replace(" ", "T"));
         return orderDate.toLocaleDateString() === selectedDate;
       });
     }
-
+  
     // Tính tổng doanh thu
-    const totalRevenue = filteredOrders.reduce((sum, order) => sum + order.total, 0);
+    const totalRevenue = filteredOrders.reduce((sum, order) => sum + Number(order.totalPrice), 0);
     return totalRevenue;
   };
+  
 
   // Lọc theo năm
   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -68,8 +70,8 @@ const OverviewRevenue: React.FC<OverviewCardProps> = ({ title, value, icon, orde
   const totalRevenue = calculateRevenue(); // Lấy tổng doanh thu theo lựa chọn
 
   // Lấy danh sách các năm và tháng trong dữ liệu
-  const years = Array.from(new Set(orders.map((order) => new Date(order.createdAt).getFullYear())));
-  const months = Array.from(new Set(orders.map((order) => new Date(order.createdAt).getMonth())));
+  const years = Array.from(new Set(orders.map((order) => new Date(order.orderDate.replace(" ", "T")).getFullYear())));
+  const months = Array.from(new Set(orders.map((order) => new Date(order.orderDate.replace(" ", "T")).getMonth())));
 
   // Lấy danh sách các ngày trong tháng được chọn mà có doanh thu
   const getDaysWithRevenue = (month: number, year: number) => {
@@ -78,7 +80,7 @@ const OverviewRevenue: React.FC<OverviewCardProps> = ({ title, value, icon, orde
 
     // Lặp qua các đơn hàng để xác định các ngày có doanh thu
     orders.forEach((order) => {
-      const orderDate = new Date(order.createdAt);
+      const orderDate = new Date(order.orderDate.replace(" ", "T"));
       if (orderDate.getMonth() === month && orderDate.getFullYear() === year) {
         const formattedDate = orderDate.toLocaleDateString();
         if (!daysWithRevenue.includes(formattedDate)) {
@@ -99,36 +101,39 @@ const OverviewRevenue: React.FC<OverviewCardProps> = ({ title, value, icon, orde
     }
     return null;
   };
-  const getRevenueForPreviousYear = (orders: { total: number; createdAt: string }[], currentYear: string) => {
+  const getRevenueForPreviousYear = (orders: { totalPrice: number | string; orderDate: string }[], currentYear: string) => {
     const previousYear = parseInt(currentYear) - 1;
     const previousYearRevenue = orders
-      .filter(order => new Date(order.createdAt).getFullYear() === previousYear)
-      .reduce((sum, order) => sum + order.total, 0);
-    
+      .filter(order => new Date(order.orderDate.replace(" ", "T")).getFullYear() === previousYear)
+      .reduce((sum, order) => sum + Number(order.totalPrice), 0);
+  
     return previousYearRevenue;
   };
+  
 
-  const getRevenueForPreviousMonth = (orders: { total: number; createdAt: string }[], currentYear: string, currentMonth: number) => {
+  const getRevenueForPreviousMonth = (orders: { totalPrice: number | string; orderDate: string }[], currentYear: string, currentMonth: number) => {
     const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const previousMonthYear = currentMonth === 0 ? parseInt(currentYear) - 1 : currentYear;
-    
+  
     const previousMonthRevenue = orders
-      .filter(order => new Date(order.createdAt).getFullYear().toString() === previousMonthYear.toString() && new Date(order.createdAt).getMonth() === previousMonth)
-      .reduce((sum, order) => sum + order.total, 0);
-    
+      .filter(order => new Date(order.orderDate.replace(" ", "T")).getFullYear().toString() === previousMonthYear.toString() && new Date(order.orderDate.replace(" ", "T")).getMonth() === previousMonth)
+      .reduce((sum, order) => sum + Number(order.totalPrice), 0);
+  
     return previousMonthRevenue;
   };
+  
 
-  const getRevenueForPreviousDay = (orders: { total: number; createdAt: string }[], currentDate: Date) => {
+  const getRevenueForPreviousDay = (orders: { totalPrice: number | string; orderDate: string }[], currentDate: Date) => {
     const previousDate = new Date(currentDate);
     previousDate.setDate(currentDate.getDate() - 1);
-    
+  
     const previousDayRevenue = orders
-      .filter(order => new Date(order.createdAt).toLocaleDateString() === previousDate.toLocaleDateString())
-      .reduce((sum, order) => sum + order.total, 0);
-    
+      .filter(order => new Date(order.orderDate.replace(" ", "T")).toLocaleDateString() === previousDate.toLocaleDateString())
+      .reduce((sum, order) => sum + Number(order.totalPrice), 0);
+  
     return previousDayRevenue;
   };
+  
   
   const previousYearRevenue = getRevenueForPreviousYear(orders, selectedYear);
   const previousMonthRevenue = selectedMonth !== 'all' ? getRevenueForPreviousMonth(orders, selectedYear, parseInt(selectedMonth)) : 0;

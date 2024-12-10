@@ -2,13 +2,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Contexts } from "@/app/Contexts";
 
-interface SelectCategoryOptionProps {
-  onCategoryChange: (category: string) => void;
+interface SelectBrandOptionProps {
+    onBrandChange: (category: string) => void;
   value: string;
 }
 
-const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCategoryChange }) => {
-  const { categories }: any = useContext(Contexts);
+const SelectBrandOption: React.FC<SelectBrandOptionProps> = ({ value, onBrandChange }) => {
+  const { manufacturers }: any = useContext(Contexts);
   const [selectedOption, setSelectedOption] = useState<string>(value || ""); // Khởi tạo bằng giá trị từ props
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(!!value); // Đổi màu nếu có giá trị ban đầu
 
@@ -22,13 +22,13 @@ const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCa
     const newValue = e.target.value;
     setSelectedOption(newValue);
     setIsOptionSelected(true);
-    onCategoryChange(newValue);
+    onBrandChange(newValue);
   };
 
   return (
     <div className="mb-4.5">
       <label className="mb-2.5 block text-black dark:text-white">
-        Product Category
+        Chọn hãng giày
       </label>
 
       <div className="capitalize relative z-20 bg-transparent dark:bg-form-input">
@@ -42,10 +42,10 @@ const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCa
           <option value="" disabled className="text-body dark:text-bodydark">
             Select product category
           </option>
-          {categories.map((option: any) => (
+          {manufacturers.map((option: any) => (
             <option
-              key={option.categoryId}
-              value={option.categoryId}
+              key={option.manufacturerId}
+              value={option.manufacturerId}
               className="text-body capitalize dark:text-bodydark"
             >
               {option.name}
@@ -77,4 +77,4 @@ const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCa
   );
 };
 
-export default SelectCategoryOption;
+export default SelectBrandOption;

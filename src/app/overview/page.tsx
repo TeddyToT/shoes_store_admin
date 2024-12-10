@@ -15,17 +15,17 @@ import OverviewRevenue from "./OverviewRevenue";
 import OrdersCard from "./OrdersCard";
 
 const Overview = () => {
-  const { orders } = useContext(Contexts);
+  const { orders, users } = useContext(Contexts);
 
   // Tổng số đơn hàng
   const totalOrders = orders.length;
 
   // Tổng doanh thu
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
 
   // Trạng thái đơn hàng
   const statusCounts = orders.reduce((acc, order) => {
-    acc[order.deliveryStatus] = (acc[order.deliveryStatus] || 0) + 1;
+    acc[order.state] = (acc[order.state] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
@@ -37,13 +37,14 @@ const Overview = () => {
 
   // Nhóm đơn hàng theo ngày và tính tổng doanh thu cho mỗi ngày
   const revenueData = orders.reduce((acc, order) => {
-    const date = new Date(order.createdAt).toLocaleDateString('en-GB'); // Định dạng ngày theo 'DD/MM/YYYY'
+    const date = new Date(order.orderDate.replace(" ", "T")).toLocaleDateString('en-GB'); // Định dạng ngày theo 'DD/MM/YYYY'
     if (!acc[date]) {
       acc[date] = { date, revenue: 0 };
     }
-    acc[date].revenue += order.total; // Cộng doanh thu vào ngày
+    acc[date].revenue += Number(order.totalPrice); // Chuyển totalPrice thành số trước khi cộng
     return acc;
   }, {} as Record<string, { date: string; revenue: number }>);
+  
 
   // Chuyển dữ liệu nhóm theo ngày thành mảng
   const revenueChartData = Object.values(revenueData).map((data) => ({
@@ -68,12 +69,12 @@ yesterday.setDate(today.getDate() - 1);
 
 // Tổng số đơn hàng hôm nay
 const todayOrders = orders.filter((order) =>
-  isSameDay(new Date(order.createdAt), today)
+  isSameDay(new Date(order.orderDate.replace(" ", "T")), today)
 ).length;
 
 // Tổng số đơn hàng hôm qua
 const yesterdayOrders = orders.filter((order) =>
-  isSameDay(new Date(order.createdAt), yesterday)
+  isSameDay(new Date(order.orderDate.replace(" ", "T")), yesterday)
 ).length;
 
   return (
@@ -96,17 +97,17 @@ const yesterdayOrders = orders.filter((order) =>
     />
     <OverviewCard
       title="Customers"
-      value={new Set(orders.map((order) => order.user)).size}
+      value={users.length}
       icon={<PersonIcon className="text-purple-500" />}
     />
   </div>
 
-  <div className="flex flex-col md:flex-row gap-4">
-    <div className="basis-2/5">
+  <div className="flex flex-col gap-4">
+    <div className="w-full">
       <StatusChart data={statusData} /> 
     </div>
 
-    <div className="basis-3/5">
+    <div className="w-full">
       <RevenueChart data={revenueChartData} /> {/* Dữ liệu doanh thu theo thời gian đã nhóm */}
     </div>
   </div>

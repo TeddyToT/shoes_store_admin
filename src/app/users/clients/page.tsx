@@ -12,15 +12,23 @@ const CustomerTable = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchUsers, setSearchUsers] = useState([]);
   useEffect(() => {
+    const filteredUsers = users.filter((user) => user.role === "Customer");
     let temp = [];
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < filteredUsers.length; i++) {
       const searchQuery = searchInput.trim().toLowerCase();
-      const userName = users[i].name.toLowerCase();
+      let userName = "";
+      if (filteredUsers[i].name) {
+        userName = filteredUsers[i].name.toLowerCase();
+      } else {
+        filteredUsers[i].name = "Chưa đặt tên";
+      }
+  
       const isMatch = userName.includes(searchQuery);
-      if (isMatch) temp.push(users[i]);
+      if (isMatch) temp.push(filteredUsers[i]);
     }
     setSearchUsers(temp);
   }, [searchInput, users]);
+  
 
   const itemsPerPage = 6; // Số mục mỗi trang
     const [currentPage, setCurrentPage] = useState(1);
@@ -62,7 +70,7 @@ const CustomerTable = () => {
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="px-4 py-6 md:px-6 xl:px-7.5">
         <h4 className="text-xl font-semibold text-black dark:text-white">
-          Customers
+          Khách hàng
         </h4>
       </div>
       <div className=" inset-0 flex justify-start">
@@ -83,25 +91,28 @@ const CustomerTable = () => {
           </form>
         </div>
       </div>
-      <div className="grid  border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+      <div className="grid  border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-9 md:px-6 2xl:px-7.5">
         <div className="col-span-2 flex items-center ">
-          <p className="font-bold">Full Name</p>
+          <p className="font-bold">Họ tên</p>
         </div>
         <div className="col-span-2 hidden items-center sm:flex">
           <p className="font-bold">Email</p>
         </div>
         <div className="col-span-3 flex items-center">
-          <p className="font-bold">Address</p>
+          <p className="font-bold">Địa chỉ</p>
         </div>
         <div className="col-span-1 flex items-center">
-          <p className="font-bold">Phone Number</p>
+          <p className="font-bold">Số điện thoại </p>
+        </div>
+        <div className="col-span-1 flex items-center">
+          <p className="font-bold">Ngày sinh </p>
         </div>
       </div>
 
       {getPaginatedData().map((user:any, key) => (
         <div
-          className="grid grid-cols-11 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-          key={user._id}
+          className="grid grid-cols-11 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-9 md:px-6 2xl:px-7.5"
+          key={user.userId}
         >
           <div className="col-span-2 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -113,29 +124,34 @@ const CustomerTable = () => {
                   width: "50",
                   height: "50",
                 }}
-                src={"/images/user/customer.png"}
+                src={user.avatar}
                   
                   alt="Product"
                 />
               </div>
               <p className="text-sm text-black dark:text-white break-words w-11/12">
-              {user.name}
+              {user.name?user.name:"Chưa đặt tên"}
               </p>
             </div>
           </div>
           <div className="col-span-2 hidden items-center sm:flex">
           <p className="text-sm text-black dark:text-white break-words w-11/12">
-          {user.email}
+          {user.email?user.email:'Chưa nhập mail'}
             </p>
           </div>
           <div className="col-span-3 flex items-center">
             <p className="text-sm text-black dark:text-white break-words w-11/12">
-              {user.address}
+              {user.address?user.address:"Chưa có địa chỉ"}
             </p>
           </div>
           <div className="col-span-1 flex items-center">
           <p className="text-sm text-black dark:text-white break-words w-11/12">
-          {user.phone}
+          {user.phone?user.phone:"Chưa nhập số điện thoại"}
+            </p>
+          </div>
+          <div className="col-span-1 flex items-center">
+          <p className="text-sm text-black dark:text-white break-words w-11/12">
+          {user.birthday?user.birthday:"Chưa nhập ngày sinh"}
             </p>
           </div>
        

@@ -9,14 +9,17 @@ export const AppProvider = ({ children }) => {
     const [users, setUsers] = useState([]);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [vouchers, setVouchers] = useState([]);
+    const [manufacturers, setManufacturers] = useState([]);
     const [orders, setOrders] = useState([]);
-    
+    const [feedbacks, setFeedbacks] = useState([]);
+    const [carts, setCarts] = useState([]);
+    const [shop, setShop] = useState([]);
+    const [banners, setBanners] = useState([]);
     
     
 
     const fetchProducts = () => {
-        axios.get("http://localhost:8081/v1/api/user/products")
+        axios.get("http://localhost/be-shopbangiay/api/product.php")
             .then((res) => {
                 
                 setProducts(res.data);
@@ -25,8 +28,9 @@ export const AppProvider = ({ children }) => {
                 console.log(err);
             });
     };
+    
     const fetchCategories = () => {
-        axios.get("http://localhost:8081/v1/api/user/categories")
+        axios.get("http://localhost/be-shopbangiay/api/category.php")
             .then((res) => {
                
                 setCategories(res.data);
@@ -36,7 +40,7 @@ export const AppProvider = ({ children }) => {
             });
     };
     const fetchUsers = () => {
-        axios.get("http://localhost:8081/v1/api/user/users")
+        axios.get("http://localhost/be-shopbangiay/api/user.php")
             .then((res) => {
                 
                 setUsers(res.data);
@@ -45,21 +49,65 @@ export const AppProvider = ({ children }) => {
                 console.log(err);
             });
     };
-    const fetchVouchers = () => {
-        axios.get("http://localhost:8081/v1/api/user/vouchers")
+
+    const fetchOrders = () => {
+        axios.get("http://localhost/be-shopbangiay/api/invoice.php")
             .then((res) => {
                 
-                setVouchers(res.data);
+                setOrders(res.data);
             })
             .catch((err) => {
                 console.log(err);
             });
     };
-    const fetchOrders = () => {
-        axios.get("http://localhost:8081/v1/api/user/orders")
+    const fetchManufacturers = () => {
+        axios.get("http://localhost/be-shopbangiay/api/manufacturer.php")
             .then((res) => {
                 
-                setOrders(res.data);
+                setManufacturers(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    
+   
+    const fetchFeedbacks= () => {
+        axios.get("http://localhost/be-shopbangiay/api/feedback.php")
+            .then((res) => {
+                
+                setFeedbacks(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    const fetchCarts= () => {
+        axios.get("http://localhost/be-shopbangiay/api/cart.php")
+            .then((res) => {
+                
+                setCarts(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    const fetchShop= () => {
+        axios.get("http://localhost/be-shopbangiay/api/shop.php")
+            .then((res) => {
+                
+                setShop(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+    const fetchBanners= () => {
+        axios.get("http://localhost/be-shopbangiay/api/banner.php")
+            .then((res) => {
+                
+                setBanners(res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -70,8 +118,10 @@ export const AppProvider = ({ children }) => {
         fetchProducts();
         fetchCategories();
         fetchUsers();
-        fetchVouchers();
+        fetchManufacturers();
         fetchOrders();
+        fetchShop();
+        fetchBanners();
     }, []);
     
     return (
@@ -79,9 +129,14 @@ export const AppProvider = ({ children }) => {
             products, setProducts, fetchProducts,
             categories, setCategories, fetchCategories, 
             users, setUsers, fetchUsers,
-            vouchers, setVouchers, fetchVouchers,
-            orders, setOrders, fetchOrders
+            manufacturers, setManufacturers, fetchManufacturers,
+            orders, setOrders, fetchOrders,
+            feedbacks, setFeedbacks, fetchFeedbacks,
+            carts, setCarts, fetchCarts,
+            shop, setShop, fetchShop,
+            banners, setBanners, fetchBanners
             
+
         }}>
             {children}
         </Contexts.Provider>

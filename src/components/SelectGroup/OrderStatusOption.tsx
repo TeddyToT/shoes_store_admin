@@ -39,14 +39,12 @@ const OrderStatusOption: React.FC<OrderStatusOptionProps> = ({
           <option value="" disabled>
             Select a status
           </option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="doing">Doing</option>
-          <option value="shipping">Shipping</option>
-          <option value="success">Success</option>
-          <option value="fail">Fail</option>
-          <option value="systemCancel">System Cancel</option>
-          <option value="customerCancel">Customer Cancel</option>
+          <option value="Pending">Pending</option>
+          <option value="Shipping">Shipping</option>
+          <option value="Confirming">Confirming</option>
+          <option value="Cancel">Cancel</option>
+          <option value="Done">Done</option>
+
         </select>
       </div>
       {isDisabled && (

@@ -7,7 +7,7 @@ const ProductCard = ({ item, sales, discount, isTopSelling }) => {
     <div className="flex items-center rounded-lg bg-white p-4 shadow relative dark:bg-gray-800">
       <div className="h-16 w-16 flex-shrink-0">
         <Image
-          src={item.image}
+          src={item.mainImage}
           alt={item.name}
           width={64}
           height={64}
@@ -16,7 +16,7 @@ const ProductCard = ({ item, sales, discount, isTopSelling }) => {
       </div>
       <div className="ml-4 flex-1">
         <h3 className="text-base font-medium text-gray-800 dark:text-gray-300">{item.name}</h3>
-        {sales && <p className="text-lg text-gray-500 dark:text-gray-100">{sales} sold</p>}
+        {sales && <p className="text-lg text-gray-500 dark:text-gray-100">Đã bán: {sales} </p>}
         {discount && <p className="text-lg text-gray-500 dark:text-gray-100">{item.discount}%</p>}
       </div>
       {isTopSelling && (

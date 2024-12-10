@@ -2,169 +2,228 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import SelectCategoryOption from "@/components/SelectGroup/SelectOption";
+import SelectBrandOption from "@/components/SelectGroup/BrandOptions";
 import { useState, useRef, useContext, useEffect } from "react";
 import { Contexts } from "@/app/Contexts";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
-interface PriceItem {
-  size: string;
-  price: number;
+
+import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+interface SizeItem {
+  size: number | "";
+  quantity: number | "";
 }
 
 const AddProduct = () => {
-
   const [productName, setProductName] = useState("");
   const [categoryName, setCategoryName] = useState("");
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [image, setImage] = useState<File | null>(null);
-  const [type, setType] = useState<PriceItem[]>([]);
+  const [brandName, setBrandName] = useState("");
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  // const [type, setType] = useState<SizeItem[]>([]);
+  const [sizes, setSizes] = useState<SizeItem[]>([]);
+  
   const [des, setDes] = useState("");
   const [discount, setDiscount] = useState(0);
-  const {fetchProducts}:any = useContext(Contexts)
+  const [price, setPrice]  = useState(0);
+  const { fetchProducts }: any = useContext(Contexts);
   const router = useRouter();
-
-  const handlePriceChange = (size: string, event: any) => {
-    const newPrice = event.target.value;
+  const [isLoading, setIsLoading] = useState(false);
   
-    setType((prevTypes) => 
-      prevTypes.map((item) =>
-        item.size === size ? { ...item, price: Number(newPrice) } : item
+
+  const handleAddRow = (event) => {
+    event.preventDefault();
+    setSizes([...sizes, { size: "", quantity: "" }]);
+  };
+
+  const handleInputChange = (index: number, field: "size" | "quantity", value: string) => {
+    setSizes((prevSizes) =>
+      prevSizes.map((item, idx) =>
+        idx === index ? { ...item, [field]: value === "" ? "" : Number(value) } : item
       )
     );
-    
   };
-  console.log(type);
+  
 
-  const addSize = (size: string) => {
-    setType((prevTypes) => {
-      // Check if the size already exists
-      const sizeIndex = prevTypes.findIndex(item => item.size === size);
-      
-      if (sizeIndex !== -1) {
-        // If the size exists, remove it
-        return prevTypes.filter(item => item.size !== size);
-      } else {
-        // If the size doesn't exist, add it with a default price
-        return [...prevTypes, { size, price: 0 }];
-      }
-    });
+  const handleSizeChange = (index, field, value) => {
+    setSizes((prevSizes) =>
+      prevSizes.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      )
+    );
+  };
+  const handleRemoveSize = (index) => {
+    setSizes((prevSizes) => prevSizes.filter((_, i) => i !== index));
   };
 
-  const handleCategoryChange = (selectedType: string) => {
+  const handleCategoryChange = (selectedType) => {
     setCategoryName(selectedType);
-    console.log("Type đã chọn:", selectedType); // Xử lý giá trị tại đây
+
+  };
+  const handleBrandChange = (selectedType) => {
+    setBrandName(selectedType);
+
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // let reader = new FileReader();
-    const file = event.target.files?.[0] || null;
+    const files = event.target.files;
 
-    if (file) {
-      const fileURL = URL.createObjectURL(file);
-      setImagePreview(fileURL);
-      setImage(file);
+    if (files) {
+      const uploadedFiles = Array.from(files);
+
+      const hasMainImage = images.some((image) => image.name.includes("main"));
+
+      const validFiles = uploadedFiles.filter((file) => {
+        if (file.name.includes("main") && hasMainImage) {
+          toast.warning('Chỉ được 1 file ảnh "main".', {
+            position: "top-right",
+            autoClose: 1500,
+          });
+          return false;
+        }
+        return true;
+      });
+
+      if (images.length + validFiles.length > 4) {
+        toast.warning("You can upload up to 4 images only.", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+        return;
+      }
+
+      const previewUrls = validFiles.map((file) => URL.createObjectURL(file));
+
+      setImages((prev) => [...prev, ...validFiles]);
+      setImagePreviews((prev) => [...prev, ...previewUrls]);
     }
   };
 
-  console.log(categoryName);
-  console.log(des);
+  const handleRemoveImage = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    URL.revokeObjectURL(imagePreviews[index]);
+
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+  console.log("Category đã chọn:", categoryName);
+  console.log("Size: ",sizes);
+  console.log("Brand đã chọn:", brandName);
+  console.log("name",productName);
+  console.log("des",des);
+  console.log("img",images);
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = new FormData();
-  
-    // Kiểm tra các giá trị
+
     if (!productName) {
       toast.warning("Please enter product name", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
     if (!categoryName) {
-    
       toast.warning("Please select category type", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
     if (!des) {
       toast.warning("Please enter product description", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
     if (discount > 100 || discount < 0) {
       toast.warning("Please enter discount value from 0 - 100", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
-    if (!image) {
+    if (!images) {
       toast.warning("Please add image for product", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
-    if (type.length === 0) {
-      
-      toast.warning("Requires types for products", {
+    if (sizes.length === 0) {
+      toast.warning("Please add at least one size", {
         position: "top-right",
-        autoClose: 1500
-      })
+        autoClose: 1500,
+      });
       return;
     }
   
+    const hasInvalidSize = sizes.some(
+      (item) => item.size === "" || item.quantity === ""
+    );
+    if (hasInvalidSize) {
+      toast.warning("Please fill out all size and quantity fields", {
+        position: "top-right",
+        autoClose: 1500,
+      });
+      return;
+    }
+    setIsLoading(true);
+
+
     form.append("name", productName);
-    form.append("type", JSON.stringify(type));
+    form.append("price", price.toString())
+    form.append("type", JSON.stringify(sizes));
     form.append("description", des);
     form.append("categoryId", categoryName);
+    form.append("manufacturerId", brandName);
     form.append("discount", discount.toString());
-    if (image) {
-      form.append("image", image);
-    }
-  
+    images.forEach((image, index) => {
+      form.append(`productImage[${index}]`, image);
+    });
+
     axios
-      .post("http://localhost:8081/v1/api/user/products", form, {
+      .post("http://localhost/be-shopbangiay/api/product.php", form, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
-        if (res.data.success == false)
-        {
+        if (res.data.success == false) {
           toast.error("Add product fail", {
             position: "top-right",
-            autoClose: 1500
-          })
+            autoClose: 1500,
+          });
+          setIsLoading(false);
           return;
-        }
-        else{
+        } else {
           fetchProducts();
           toast.success("Add product sucessfully", {
             position: "top-right",
-            autoClose: 2000
-          })
-          router.push("/product/overview")
+            autoClose: 2000,
+          });
+          setIsLoading(false);
+          router.push("/product/overview");
         }
-        
-        console.log('Response:', res.data);
+
+        console.log("Response:", res.data);
       })
       .catch((err) => {
         toast.error("Add product fail", {
           position: "top-right",
-          autoClose: 1500
-        })
+          autoClose: 1500,
+        });
+        setIsLoading(false);
         console.log("Error:", err.response ? err.response.data : err.message);
-      })
-      
+      });
   };
-  
- 
-  
+
   return (
     <DefaultLayout>
       <Breadcrumb
@@ -176,61 +235,72 @@ const AddProduct = () => {
       />
       <div className="flex flex-col gap-10">
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        {isLoading && <LoadingSpinner />}
+        
           <form action="#">
             <div className="p-6.5">
               <div className="mb-4.5">
-                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Product Name
+                <label className="mb-3 block  font-medium text-black dark:text-white">
+                  Tên sản phẩm
                 </label>
                 <input
                   type="text"
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
-                  placeholder="Enter product name"
+                  placeholder="Nhập tên sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
-              <SelectCategoryOption value={categoryName} onCategoryChange={handleCategoryChange} />
-              {categoryName ? (
-                <div className="flex flex-col">
-                  <div className="mb-4.5 flex flex-row gap-4">
-                    <button className="rounded px-3 py-1 font-medium text-black shadow-card shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card dark:text-white dark:hover:bg-boxdark" 
-                    type="button" onClick={() => addSize("S")}>
-                      Add Size S
-                    </button>
-                    <button className="rounded px-3 py-1 font-medium text-black shadow-card shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card dark:text-white dark:hover:bg-boxdark" 
-                    type="button" onClick={() => addSize("M")}>
-                      Add Size M
-                    </button>
-                    <button className="rounded px-3 py-1 font-medium text-black shadow-card shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card dark:text-white dark:hover:bg-boxdark" 
-                    type="button" onClick={() => addSize("L")}>
-                      Add Size L
-                    </button>
-                  </div>
-                  {type ? (
-                    type.map((item) => (
-                      <div className="mb-4.5" key={item.size}>
-                        <label className="capitalize mb-3 block text-sm font-medium text-black dark:text-white">
-                          Enter Price for size {item.size}
-                        </label>
-                        <input
-                          type="number"
-                          value={item.price}
-                          onChange={(e) => handlePriceChange(item.size, e)}
-                          placeholder="Enter price"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <div></div>
-                  )}
-                </div>
-              ) : (
-                <div></div>
-              )}
               <div className="mb-4.5">
-                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+      <div className="mb-3 flex flex-row items-center gap-3">
+        <label className="block font-medium text-black dark:text-white">
+          Size giày
+        </label>
+        <button
+          onClick={handleAddRow}
+          className="flex justify-center rounded bg-primary p-2 font-medium text-gray hover:bg-opacity-90"
+        >
+          Thêm size giày mới
+        </button>
+      </div>
+
+      {sizes.map((item, index) => (
+  <div key={index} className="flex flex-row gap-3 pt-3 items-center">
+    <input
+      type="text"
+      value={item.size}
+      onChange={(e) => handleSizeChange(index, "size", e.target.value)}
+      placeholder="Nhập size giày"
+      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+    />
+    <input
+      type="text"
+      value={item.quantity}
+      onChange={(e) => handleSizeChange(index, "quantity", e.target.value)}
+      placeholder="Nhập tồn kho"
+      className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+    />
+    <p
+      onClick={() => handleRemoveSize(index)}
+      className="hover:cursor-pointer px-3 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition"
+    >
+      Xóa
+    </p>
+  </div>
+))}
+
+
+    </div>
+              <SelectCategoryOption
+                value={categoryName}
+                onCategoryChange={handleCategoryChange}
+              />
+              <SelectBrandOption
+                value={brandName}
+                onBrandChange={handleBrandChange}
+              />
+              <div className="mb-4.5">
+                <label className="mb-3 block  font-medium text-black dark:text-white">
                   Product Description
                 </label>
                 <input
@@ -242,7 +312,19 @@ const AddProduct = () => {
                 />
               </div>
               <div className="mb-4.5">
-                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                <label className="blockfont-medium mb-3 text-black dark:text-white">
+                  Giá sản phẩm
+                </label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="Enter product discount (Default value is 0)"
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                />
+              </div>
+              <div className="mb-4.5">
+                <label className="blockfont-medium mb-3 text-black dark:text-white">
                   Product Discount
                 </label>
                 <input
@@ -254,35 +336,61 @@ const AddProduct = () => {
                 />
               </div>
               <div className="mb-4.5">
-                <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Attach Product Image
+                <label className="mb-3 block font-medium text-black dark:text-white">
+                  Attach Product Image (
+                  {images.length < 4 ? "4 ảnh" : "Đã đủ 4 ảnh"})
                 </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="w-full cursor-pointer rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke file:bg-whiter file:px-5 file:py-3 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white dark:focus:border-primary"
-                />
+
+                <div className="relative mt-2 flex items-center justify-center">
+                  <input
+                    multiple
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="absolute left-0 top-0 h-full w-full cursor-pointer opacity-0"
+                  />
+
+                  <button className=" w-1/2 rounded-lg bg-blue-500 px-5 py-3 text-white hover:bg-blue-600 focus:outline-none">
+                    Thêm ảnh
+                  </button>
+                </div>
               </div>
-              {imagePreview && (
-                <div className="mt-4">
-                  {imagePreview && (
-                    <div className="mt-4">
+
+              {imagePreviews.length > 0 && (
+                <div className="my-10 grid grid-cols-2 gap-2 w-1/2 place-self-center ">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="group relative flex flex-row  w-fit">
                       <Image
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
                         width={128}
                         height={128}
-                        src={imagePreview}
-                        alt="Preview"
                         className="h-32 w-32 rounded-lg border border-stroke object-cover"
                       />
+                      {(typeof images[index] === "string" &&
+                        images[index]?.includes("main")) ||
+                      (images[index] instanceof File &&
+                        images[index]?.name.includes("main")) ? (
+                        <span className="absolute left-0 top-0 rounded-br-lg bg-red-500 px-2 py-1 text-xs text-white">
+                          Main
+                        </span>
+                      ) : null}
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleRemoveImage(e, index)}
+                        className="absolute rounded-full bg-black bg-opacity-50 p-1 text-white opacity-0 transition group-hover:opacity-100"
+                      >
+                        X
+                      </button>
                     </div>
-                  )}
+                  ))}
                 </div>
               )}
               <button
-              onClick={handleSubmit}
-              
-              className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
+                onClick={handleSubmit}
+                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
+              >
                 Add
               </button>
             </div>

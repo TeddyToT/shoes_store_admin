@@ -4,7 +4,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import DatePicker from "@/components/FormElements/DatePicker/DatePicker";
 import { useState, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 import { Contexts } from "@/app/Contexts";
 import axios from "axios";
 const EditCategory = ({ params }: { params: { id: string } }) => {
@@ -12,10 +12,10 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
 
   const {fetchCategories}:any = useContext(Contexts)
   const [categoryName, setCategoryName] = useState("");
-
+  const router = useRouter();
   useEffect(() => {
     axios
-      .get(`http://localhost:8081/v1/api/user/categories/` + id)
+      .get(`http://localhost/be-shopbangiay/api/category.php?categoryId=` + id)
       .then((res) => {
         setCategoryName(res.data.name);
       })
@@ -35,12 +35,13 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
       return;
     }
 
-    fetch(`http://localhost:8081/v1/api/user/categories/${id}`, {
+    fetch(`http://localhost/be-shopbangiay/api/category.php`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          categoryId: id,
           name: categoryName,
 
         }),
@@ -60,11 +61,10 @@ const EditCategory = ({ params }: { params: { id: string } }) => {
             fetchCategories()
             toast.success("Edit category successfully", {
               position: "top-right",
-              autoClose: 2000,  // Đảm bảo toast tự động đóng sau 2 giây
-              onClose: () => {
-                router.push("/product/category"); // Chuyển hướng khi toast đóng
-              }
+              autoClose: 2000, 
+
             });
+            router.push("/product/category"); 
           }
 
     })

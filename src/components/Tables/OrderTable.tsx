@@ -9,28 +9,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
-const OrderTable = ({ filterStatus, setFilterStatus }) => {
+const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
   const { orders, fetchOrders }: any = useContext(Contexts);
   // console.log(orders);
+
+  const [reversedOrders, setReversedOrders] = useState([]);
+
+  useEffect(() => {
+    if (orders.length > 0) {
+      setReversedOrders([...orders].reverse());
+    }
+  }, [orders]);
+
   const [searchInput, setSearchInput] = useState("");
   const [searchOrders, setSearchOrders] = useState([]);
 
   useEffect(() => {
-    let filtered = orders;
+    let filtered = reversedOrders;
 
     if (filterStatus !== "all") {
-      filtered = orders.filter(
-        (order) => order.deliveryStatus === filterStatus,
-      );
+      filtered = reversedOrders.filter((order) => order.state === filterStatus);
     }
 
     const searchQuery = searchInput.trim().toLowerCase();
     const temp = filtered.filter((order) =>
-      order._id.toLowerCase().includes(searchQuery),
+      order.invoiceId.toLowerCase().includes(searchQuery),
     );
 
     setSearchOrders(temp);
-  }, [searchInput, filterStatus, orders]);
+  }, [searchInput, filterStatus, orders, reversedOrders]);
 
   const itemsPerPage = 8; // Số mục mỗi trang
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,57 +64,25 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
       setCurrentPage(inputValue);
     }
   };
-  
+
   const getPaginatedData = useCallback(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
 
-    const sortedOrders = [...searchOrders].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-    );
-
-    return sortedOrders.slice(startIndex, startIndex + itemsPerPage);
+    return searchOrders.slice(startIndex, startIndex + itemsPerPage);
   }, [currentPage, searchOrders]);
-
-
-
-  const [userNames, setUserNames] = useState({});
-
-  useEffect(() => {
-    const getUser = (userID) => {
-      fetch(`http://localhost:8081/v1/api/user/users/${userID}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setUserNames((prevState) => ({
-            ...prevState,
-            [userID]: data.name,
-          }));
-        })
-        .catch((err) => {
-          // console.error(err);
-          setUserNames((prevState) => ({
-            ...prevState,
-            [userID]: "Failed to fetch user",
-          }));
-        });
-    };
-
-    // Iterate over user IDs and fetch the user names
-    const userIDs = getPaginatedData().map((orderItem) => orderItem.user);
-    userIDs.forEach(getUser); // Fetch user for each ID
-  }, [getPaginatedData]);
 
   const handleDeleteOrder = (orderId: string) => {
     axios
       .delete(`http://localhost:8081/v1/api/user/orders/${orderId}`)
       .then((response) => {
         if (response.data.success == true) {
-          toast.success("Xóa voucher thành công", {
+          toast.success("Xóa đơn hàng thành công", {
             position: "top-right",
             autoClose: 2000,
           });
           fetchOrders();
         } else {
-          toast.error("Xóa voucher thất bại", {
+          toast.error("Xóa đơn hàng thất bại", {
             position: "top-right",
             autoClose: 2000,
           });
@@ -122,46 +97,25 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
       });
   };
   return (
-    <div className=" relative rounded-md overflow-hidden border border-gray-400  bg-white pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-      {/* <div className=" inset-0 flex justify-start">
-        <div className=" w-full px-4 py-5 sm:block">
-          <form action="#" method="POST">
-            <div className="relative">
-              <button className="absolute left-0 top-1/2 -translate-y-1/2">
-                <SearchOutlinedIcon />
-              </button>
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Type to search..."
-                className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
-              />
-            </div>
-          </form>
-        </div>
-      </div> */}
+    <div className=" relative overflow-hidden rounded-md border border-gray-400  bg-white pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
               <th className="min-w-[175px] px-4 py-4 font-medium text-black dark:text-white xl:pl-6">
-                User
+                Khách hàng
               </th>
               <th className="flex min-w-[450px] justify-center px-4 py-4 font-medium text-black dark:text-white">
-                Items
+                Sản phẩm
               </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                Voucher Used
+                Thanh toán
               </th>
               <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                Payment
-              </th>
-              <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
-                Status
+                Trạng thái
               </th>
               <th className="px-4 py-4 font-medium text-black dark:text-white">
-                Actions
+                Hành động
               </th>
             </tr>
           </thead>
@@ -173,7 +127,9 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
               >
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-6">
                   <h5 className="font-medium text-black dark:text-white">
-                    {userNames[orderItem.user] || "Guest"}
+                    {orderItem.userId.name
+                      ? orderItem.userId.name
+                      : "Không tên"}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
@@ -181,55 +137,59 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
                     {orderItem.items.map((item) => (
                       <div
                         className="flex flex-row justify-between border-b-2 py-2"
-                        key={item._id}
+                        key={item.productId}
                       >
-                        {item.product == null ? (
-                          <p>Product đã bị xóa</p>
+                        {item.productId == null ? (
+                          <div className="flex basis-3/4 flex-row items-center gap-2">
+                            <div className="flex flex-col">
+                              <p className="text-ellipsis">Product đã bị xóa</p>
+                              {/* <p className="capitalize">Size: {item.size}</p> */}
+                            </div>
+                          </div>
                         ) : (
-                          item.product.image && (
-                            <div className="flex basis-3/4 flex-row items-center gap-2">
+                          <div className="flex basis-3/4 flex-row items-center gap-2">
+                            {item.productId.mainImage && (
                               <Image
-                                src={item.product.image}
-                                alt={item.product.name}
+                                src={item.productId.mainImage}
+                                alt={item.productId.name}
                                 width={60}
                                 height={60}
                               />
+                            )}
+                            <div className="flex flex-col">
                               <p className="text-ellipsis">
-                                {item.product.name}
+                                {item.productId.name}
                               </p>
+                              <p className="capitalize">Size: {item.size}</p>
                             </div>
-                          )
+                          </div>
                         )}
 
-                        <div className="flex flex-col items-start gap-2 text-sm">
-                          <p className="uppercase">Size: {item.size}</p>
+                        <div className="flex flex-col w-1/4 items-start gap-2 ">
                           <p>Quantity: {item.quantity}</p>
-                          <p>Price: {item.quantity * item.price} </p>
+                          <p>
+                            Price:{" "}
+                            {(
+                              item.quantity *
+                              (item.productId.price -
+                                (item.productId.price *
+                                  item.productId.discount) /
+                                  100)
+                            ).toLocaleString("vi-VN")}đ
+                          </p>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-3 text-right text-base font-semibold ">
-                    Total: {orderItem.total}{" "}
+                  <p className="mt-3 text-right text-base font-semibold  flex w-1/4 place-self-end">
+                    Total:{" "}
+                    {Number(orderItem.totalPrice).toLocaleString("vi-VN")}đ
                   </p>
                 </td>
+
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  {orderItem.voucher.length > 0 ? (
-                    orderItem.voucher.map((voucher) => (
-                      <p
-                        key={voucher._id}
-                        className="my-3 text-center uppercase"
-                      >
-                        {voucher.name || "Loading..."}
-                      </p>
-                    ))
-                  ) : (
-                    <p>No voucher used</p>
-                  )}
-                </td>
-                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  <p className="capitalize">
-                    {orderItem.paymentMethod}: {orderItem.paymentStatus}
+                  <p className="text-center capitalize">
+                    {orderItem.paymentMethod ? orderItem.paymentMethod : "Test"}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
@@ -250,13 +210,13 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
                                   : " text-danger"
                     }`}
                   >
-                    {orderItem.deliveryStatus}
+                    {orderItem.state}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <Link
-                      href={`/order/management/edit-order/${orderItem._id}`}
+                      href={`/order/management/edit-order/${orderItem.invoiceId}`}
                       className="hover:text-primary"
                     >
                       <ModeEditIcon />
@@ -268,7 +228,7 @@ const OrderTable = ({ filterStatus, setFilterStatus }) => {
                             "Bạn có chắc chắn muốn xóa voucher này không?",
                           )
                         ) {
-                          handleDeleteOrder(orderItem._id);
+                          handleDeleteOrder(orderItem.invoiceId);
                         }
                       }}
                       className="hover:text-primary"

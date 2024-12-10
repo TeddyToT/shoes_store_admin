@@ -155,7 +155,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
     },
   ]}
   height={300}
-  margin={{ left: 72, right: 30, top: 10, bottom: 30 }}  // Điều chỉnh margin thêm khoảng trống cho trục Y
+  margin={{ left: 80, right: 30, top: 10, bottom: 30 }}  // Điều chỉnh margin thêm khoảng trống cho trục Y
   tooltip={{
     valueFormatter: (value) => `${value.toLocaleString()} VND`,
   }}

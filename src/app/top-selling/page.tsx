@@ -13,11 +13,11 @@ const ProductTracking = () => {
   const productSales = orders.reduce(
     (acc, order) => {
       order.items.forEach((item) => {
-        const product = item.product;
+        const product = item.productId;
         if (product) {
-          const productId = product._id;
+          const productId = product.productId;
           if (!acc[productId]) acc[productId] = { product, sales: 0 };
-          acc[productId].sales += item.quantity;
+          acc[productId].sales += Number(item.quantity);
         }
       });
       return acc;
@@ -27,16 +27,16 @@ const ProductTracking = () => {
 
   const productSalesToday = orders.reduce(
     (acc, order) => {
-      const orderDate = new Date(order.createdAt).toLocaleDateString("en-GB");
+      const orderDate = new Date(order.orderDate.replace(" ", "T")).toLocaleDateString("en-GB");
       const todayDate = new Date().toLocaleDateString("en-GB");
 
       if (orderDate === todayDate) {
         order.items.forEach((item) => {
-          const product = item.product;
+          const product = item.productId;
           if (product) {
-            const productId = product._id;
+            const productId = product.productId;
             if (!acc[productId]) acc[productId] = { product, sales: 0 };
-            acc[productId].sales += item.quantity;
+            acc[productId].sales += Number(item.quantity);
           }
         });
       }
@@ -83,7 +83,7 @@ const ProductTracking = () => {
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
           {topSellingProductsToday.map((item) => (
             <ProductCard
-              key={item.product._id}
+              key={item.productId}
               item={item.product}
               sales={item.sales}
               isTopSelling={true}
@@ -99,7 +99,7 @@ const ProductTracking = () => {
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
           {topSellingProducts.map((item) => (
             <ProductCard
-              key={item.product._id}
+              key={item.productId}
               item={item.product}
               sales={item.sales}
             />

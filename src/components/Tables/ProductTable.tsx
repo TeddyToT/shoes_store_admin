@@ -27,7 +27,11 @@ const ProductTable = () => {
 
   const handleDeleteProduct = (productId: string) => {
     axios
-      .delete(`http://localhost:8081/v1/api/user/products/${productId}`)
+      .delete(
+        `http://localhost/be-shopbangiay/api/product.php`,{
+          data: { productId },
+        }
+      )
       .then((response) => {
         if (response.data.success == true) {
           toast.success("Xóa sản phẩm thành công", {
@@ -78,13 +82,9 @@ const ProductTable = () => {
 
   const getPaginatedData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const sortedOrders = [...searchProducts].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
-    );
-
-    return sortedOrders.slice(startIndex, startIndex + itemsPerPage);
+   
+    return searchProducts.slice(startIndex, startIndex + itemsPerPage);
   };
-
 
   return (
     <div className="mb-5 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -107,41 +107,44 @@ const ProductTable = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-9  border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
+      <div className="grid grid-cols-10  border-t border-stroke px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5">
         <div className="col-span-3 flex items-center">
-          <p className="font-bold">Product Name</p>
+          <p className="font-bold">Tên sản phẩm</p>
         </div>
         <div className="col-span-1 hidden items-center sm:flex">
-          <p className="font-bold">Status</p>
+          <p className="font-bold">Tình trạng</p>
         </div>
         <div className="col-span-1 hidden items-center sm:flex">
-          <p className="font-bold">Category</p>
+          <p className="font-bold">Thể loại</p>
+        </div>
+        <div className="col-span-1 hidden items-center sm:flex">
+          <p className="font-bold">Hãng</p>
         </div>
         <div className="col-span-2 flex items-center ">
-          <p className="w-full text-center font-bold">Price</p>
+          <p className="w-full text-center font-bold">Loại</p>
         </div>
         <div className="col-span-1 flex items-center justify-center">
-          <p className="font-bold">Discount (%)</p>
+          <p className="font-bold">Giá</p>
         </div>
         <div className="col-span-1 flex items-center justify-center">
-          <p className="font-bold">Action</p>
+          <p className="font-bold">Hành động</p>
         </div>
       </div>
 
-      {getPaginatedData().map((product: any, key) => (
+      {getPaginatedData().reverse().map((product: any, key) => (
         <div
           className={
             key % 2 != 0
-              ? "grid grid-cols-9 bg-gray-100 px-4  py-4.5 dark:bg-gray-800 md:px-6 2xl:px-7.5"
-              : "grid grid-cols-9 px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5"
+              ? "grid grid-cols-10 bg-gray-50 px-4  py-4.5 dark:bg-gray-800 md:px-6 2xl:px-7.5"
+              : "grid grid-cols-10 px-4 py-4.5 dark:border-strokedark md:px-6 2xl:px-7.5"
           }
-          key={product._id}
+          key={product.productId}
         >
           <div className="col-span-3 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="h-12.5 w-15 rounded-md">
+              <div className="h-15 w-17.2 rounded-md">
                 <Image
-                  src={product.image}
+                  src={product.mainImage}
                   width={70}
                   height={60}
                   alt={product.name}
@@ -153,13 +156,15 @@ const ProductTable = () => {
             </div>
           </div>
           <div className="col-span-1 hidden items-center sm:flex">
-            {product.isStock ? (
+            {product.type.some(
+              (item: any) => parseInt(item.quantity, 10) > 0,
+            ) ? (
               <p className="text-sm capitalize text-green-600 dark:text-white">
-                Available
+                Còn hàng
               </p>
             ) : (
               <p className="text-sm capitalize text-danger dark:text-white">
-                Sold Out
+                Hết hàng
               </p>
             )}
           </div>
@@ -168,23 +173,27 @@ const ProductTable = () => {
               {product.categoryId.name}
             </p>
           </div>
+          <div className="col-span-1 hidden items-center sm:flex">
+            <p className="text-sm capitalize text-black dark:text-white">
+              {product.manufacturerId.name}
+            </p>
+          </div>
 
           <div className="col-span-2 flex flex-col items-center gap-2">
             {product.type
               .sort((a, b) => {
-                const sizeOrder = { S: 1, M: 2, L: 3 };
-                return sizeOrder[a.size] - sizeOrder[b.size];
+                return parseInt(a.size, 10) - parseInt(b.size, 10);
               })
               .map((item: any, index) => (
                 <div
                   key={index}
-                  className="flex w-1/2 flex-row justify-between"
+                  className="flex w-2/3 flex-row justify-between mb-2"
                 >
                   <p className="text-sm text-black dark:text-white">
-                    size {item.size}:
+                    Size {item.size}:
                   </p>
                   <p className="text-sm text-black dark:text-white">
-                    {item.price} VNĐ
+                    {item.quantity} sản phẩm
                   </p>
                 </div>
               ))}
@@ -192,14 +201,14 @@ const ProductTable = () => {
 
           <div className="col-span-1 hidden items-center justify-center sm:flex">
             <p className="text-sm text-black dark:text-white">
-              {product.discount}
+              {parseInt(product.price).toLocaleString("vi-VN")} VNĐ
             </p>
           </div>
 
           <div className="col-span-1 flex items-center justify-center">
             <div className="flex items-center space-x-3.5">
               <Link
-                href={`/product/overview/edit-product/${product._id}`}
+                href={`/product/overview/edit-product/${product.productId}`}
                 className="hover:text-primary"
               >
                 <ModeEditIcon />
@@ -211,7 +220,7 @@ const ProductTable = () => {
                       "Bạn có chắc chắn muốn xóa sản phẩm này không?",
                     )
                   ) {
-                    handleDeleteProduct(product._id);
+                    handleDeleteProduct(product.productId);
                   }
                 }}
                 className="hover:text-red-500"

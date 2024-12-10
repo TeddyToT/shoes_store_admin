@@ -28,17 +28,13 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
   const [address, setAddress] = useState<string>("");
   const [note, setNote] = useState<string>("");
   const [createdAt, setCreatedAt] = useState<string>("");
-  const [updatedAt, setUpdatedAt] = useState<string>("");
+
 
   const [deliveryStatus, setDeliveryStatus] = useState<string>("");
   const [currentDeliveryStatus, setCurrentDeliveryStatus] = useState<string>("");
 
     
-    const calculateSubtotal = (items) => {
-        return items.reduce((total, item) => {
-            return total + item.quantity * item.price;
-        }, 0); // 
-    };
+   
   const { fetchOrders }: any = useContext(Contexts);
   const router = useRouter();
   function convertDateFormat(date: string): string {
@@ -49,25 +45,34 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
     const [day, month, year] = date.split("/");
     return new Date(`${year}-${month}-${day}`);
   }
+  const formatDateTime = (dateTime) => {
+    const [date, time] = dateTime.split(" ");
+    const [year, month, day] = date.split("-");
+  
+    return `${day}/${month}/${year} ${time}`;
+  };
+  
+
+  
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8081/v1/api/user/orders/` + id)
+      .get(`http://localhost/be-shopbangiay/api/invoice.php?invoiceId=` + id)
       .then((res) => {
         setUser(res.data.user);
         setName(res.data.name);
         setPhone(res.data.phone)
         setItems(res.data.items);
         setVoucher(res.data.voucher);
-        setTotal(res.data.total);
+        setTotal(res.data.totalPrice);
         setPaymentStatus(res.data.paymentStatus);
         setPaymentMethod(res.data.paymentMethod);
         setDeliveryStatus(res.data.deliveryStatus);
-        setCurrentDeliveryStatus(res.data.deliveryStatus);
+        setCurrentDeliveryStatus(res.data.state);
         setAddress(res.data.address);
         setNote(res.data.note);
-        setCreatedAt(res.data.createdAt);
-        setUpdatedAt(res.data.updatedAt);
+        setCreatedAt(res.data.orderDate);
+
 
 
       })
@@ -105,13 +110,16 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
   const handleEditSubmit = (event) => {
     event.preventDefault();
-    fetch(`http://localhost:8081/v1/api/user/orders/changeStatus/${id}`, {
+    fetch(`http://localhost/be-shopbangiay/api/invoice.php`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        deliveryStatus: deliveryStatus,
+        invoiceId: id,
+        state: deliveryStatus,
+        address: address,
+        note: note
       }),
     })
       .then((res) => res.json())
@@ -120,18 +128,18 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
           if (data.success == false)
           {
-            toast.error("Edit delivery status failed, the route was not right", {
+            toast.error("Sửa trạng thái đơn hàng không thành công", {
               position: "top-right",
               autoClose: 5000,
             });
           }
           else {
             fetchOrders()
-          toast.success("Edit delivery status sucessfully", {
+          toast.success("Sửa trạng thái đơn hàng thành công", {
             position: "top-right",
-            autoClose: 2000,  // Đảm bảo toast tự động đóng sau 2 giây
+            autoClose: 2000, 
             onClose: () => {
-              router.push("/order/management"); // Chuyển hướng khi toast đóng
+              router.push("/order/management");
             }
           });
           }
@@ -181,19 +189,19 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                         >
                           <div className="flex flex-col">
                           <div className="flex basis-3/4 flex-row items-center gap-2">
-                            {item.product.image && (
+                            {item.productId.mainImage && (
                               <Image
-                                src={item.product.image}
-                                alt={item.product.name}
+                                src={item.productId.mainImage}
+                                alt={item.productId.name}
                                 width={60}
                                 height={60}
                               />
                             )}
                             
-                            <p className="text-ellipsis">{item.product.name}</p>
+                            <p className="text-ellipsis">{item.productId.name}</p>
                             
                           </div>
-                          <p className="text-ellipsis italic max-w-150">Note: {item.note}</p>
+                          
                           </div>
                           <div className="flex flex-col items-start gap-2 text-sm basis-1/6 ">
                             <div className="flex flex-row justify-between w-full">
@@ -204,10 +212,23 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                             <p className="capitalize">Quantity: </p>
                             <p className="capitalize">{item.quantity}</p>
                               </div>
-                              <div className="flex flex-row justify-between w-full">
-                            <p className="capitalize">Price: </p>
-                            <p className="capitalize">{item.quantity * item.price}</p>
-                              </div>
+                              {item.productId.discount != 0?(
+                                <div className="flex flex-col justify-between w-full gap-2">
+                                  <div className="flex flex-row justify-between w-full">
+                                <p className="capitalize">Discount: </p>
+                                <p className="capitalize">{item.productId.discount}%</p>
+                                  </div>
+                                <div className="flex flex-row justify-between w-full">
+                                <p className="capitalize">Giá: </p>
+                                <p className="">{Number((item.productId.price-(item.productId.price*item.productId.discount/100))*item.quantity).toLocaleString("vi-VN")}đ</p>
+                                  </div>
+                                
+                                  </div>):(<div className="flex flex-row justify-between w-full">
+                                
+                                <p className="capitalize">Giá: </p>
+                                <p className="">{Number(item.quantity * item.productId.price).toLocaleString("vi-VN")}đ</p>
+                                  </div>)}
+                              
         
                           </div>
                         </div>
@@ -215,56 +236,15 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
                   </div>
 
+                  
                   <div className="mb-5.5 flex w-full flex-row justify-between "> 
-                    <label className=" flex font-medium text-black dark:text-white w-1/2 ">
-                      Subtotal
-                    </label>
-                    <div className="flex w-1/2 place-items-center justify-end ">
-                      
-                        <p className="text-gray-500 dark:text-white">
-                          {calculateSubtotal(items)}
-                        </p>  
-                    </div>
-                  </div>
-                  <div className="mb-2.5 flex w-full flex-row justify-between "> 
-                    <label className=" flex font-medium text-black dark:text-white w-1/2 ">
-                      Voucher
-                    </label>
-                    <div className="flex w-1/2 place-items-center justify-end ">
-                      {voucher.length == 0 ? (
-                        <div className="text-gray-500 dark:text-white">
-                          No vouchers used  
-                        </div>
-                      ) : (
-                        <div className="w-full ">
-                          {voucher.map((voucher) => (
-                            <div key={voucher._id} className=" flex justify-end gap-2 flex-row w-full mb-2">
-                              <h4 className=" flex  font-medium text-black dark:text-white uppercase">
-                                {voucher.name}:
-                              </h4>
-                              {voucher.type == "trade"?(
-                                <p className="flex dark:text-white">{voucher.value}%</p>
-                              ):(
-                                <p className="flex dark:text-white">{voucher.value}</p>
-                              )}
-                              
-                              
-                            </div>
-                            
-                          ))}
-                        </div>
-                      )}
-                      
-                    </div>
-                  </div>
-                  <div className="mb-5.5 flex w-full flex-row justify-between "> 
-                    <label className=" flex font-black text-black dark:text-white w-1/2 ">
-                      Final Price
+                    <label className=" flex font-semibold text-black dark:text-white w-1/2 ">
+                      Tổng
                     </label>
                     <div className="flex w-1/2 place-items-center justify-end ">
                       
                         <p className="text-gray-500 font-black dark:text-white">
-                          {total}
+                          {Number(total).toLocaleString("vi-VN")}đ
                         </p>  
                     </div>
                   </div>
@@ -322,6 +302,14 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                   </div>
                   <div className="mb-5.5 w-full">
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+                      Thời gian đặt
+                    </label>
+                    <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
+                      {createdAt?formatDateTime(createdAt):"No Time"}
+                    </p>
+                  </div>
+                  <div className="mb-5.5 w-full">
+                    <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                       Note
                     </label>
                     <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
@@ -344,7 +332,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                       Current Payment Status
                     </label>
                     <p className="capitalize w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                      {paymentMethod} - {paymentStatus}
+                      {paymentMethod}
                     </p>
                   </div>
                   <div className="mb-5.5 w-full">
@@ -352,21 +340,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                       Current Delivery Status
                     </label>
                     <p className="capitalize w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                    {currentDeliveryStatus === "success"
-                        ? "Success"
-                        : currentDeliveryStatus === "fail"
-                          ? "fail"
-                          : currentDeliveryStatus === "shipping"
-                            ? "shipping"
-                            : currentDeliveryStatus === "doing"
-                              ? "doing"
-                              : currentDeliveryStatus === "confirmed"
-                                ? "confirmed"
-                                : currentDeliveryStatus === "pending"
-                                  ? "pending"
-                                   : currentDeliveryStatus === "systemCancel"
-                                   ?"system Cancel"
-                                    : " customer Cancel"}
+                    {currentDeliveryStatus}
                     </p>
                   </div>
                   <div className="mb-4.5">

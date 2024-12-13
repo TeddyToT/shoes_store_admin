@@ -9,12 +9,12 @@ const StatusChart: React.FC<StatusChartProps> = ({ data }) => {
   return (
     <div className="bg-white shadow rounded-lg p-4 dark:bg-gray-800">
       <h3 className="font-medium text-gray-500 mb-4 dark:text-gray-400">
-      Order Status
+      Tình trạng đơn hàng
       </h3>
       <PieChart
         series={[
           {
-            data, 
+            data,
             type: "pie",
           },
         ]}
@@ -27,7 +27,7 @@ const StatusChart: React.FC<StatusChartProps> = ({ data }) => {
             position: { vertical: "middle", horizontal: "right" },
             labelStyle: {
          
-              color: "currentColor", 
+              color: "#4A90E2", 
               fontSize: 14,
             },
           },

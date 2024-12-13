@@ -25,13 +25,15 @@ const ProductTable = () => {
     setSearchProducts(temp);
   }, [products, searchInput]);
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = (id: string) => {
+    console.log(id);
     axios
       .delete(
         `http://localhost/be-shopbangiay/api/product.php`,{
-          data: { productId },
+          data: { productId: id.toString() }
         }
       )
+      
       .then((response) => {
         if (response.data.success == true) {
           toast.success("Xóa sản phẩm thành công", {
@@ -40,6 +42,7 @@ const ProductTable = () => {
           });
           fetchProducts();
         } else {
+          console.log(response.data);
           toast.error("Xóa sản phẩm thất bại", {
             position: "top-right",
             autoClose: 2000,
@@ -99,7 +102,7 @@ const ProductTable = () => {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Type to search..."
+                placeholder="Nhập tên sản phẩm..."
                 className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
               />
             </div>

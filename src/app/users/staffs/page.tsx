@@ -6,9 +6,10 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Contexts } from "@/app/Contexts";
+import Link from "next/link";
 
 const Staffs = () => {
-  const{users}: any = useContext(Contexts);
+  const{users, userDetail}: any = useContext(Contexts);
   const [searchInput, setSearchInput] = useState("");
   const [searchUsers, setSearchUsers] = useState([]);
   useEffect(() => {
@@ -61,7 +62,10 @@ const Staffs = () => {
       const startIndex = (currentPage - 1) * itemsPerPage;
       return searchUsers.slice(startIndex, startIndex + itemsPerPage);
     };
-
+    function convertDMYFormat(date: string): string {
+      const [year, month, day] = date.split("/");
+      return `${day}/${month}/${year}`;
+    }
   // console.log(users);
   return (
     <DefaultLayout>
@@ -73,6 +77,17 @@ const Staffs = () => {
           Nhân viên
         </h4>
       </div>
+      {userDetail?(userDetail.role == "Admin"?(<Link
+              href="/users/staffs/add-staff"
+              className="mb-3 ml-5 inline-flex items-center justify-center rounded-full bg-black dark:text-black dark:bg-gray-300 dark:hover:bg-slate-600 dark:hover:text-white px-5 py-3 text-center font-normal text-white hover:bg-opacity-90 lg:px-4 xl:px-6"
+            >
+              Thêm Nhân viên
+            </Link>):(
+              <div>
+                </div>
+            )):(<div>
+                </div>)}
+      
       <div className=" inset-0 flex justify-start">
         <div className=" w-full px-4 py-5 sm:block">
           <form action="#" method="POST">
@@ -93,7 +108,7 @@ const Staffs = () => {
       </div>
       <div className="grid  border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-9 md:px-6 2xl:px-7.5">
         <div className="col-span-2 flex items-center ">
-          <p className="font-bold">Họ tên</p>
+          <p className="font-bold ">Họ tên</p>
         </div>
         <div className="col-span-2 hidden items-center sm:flex">
           <p className="font-bold">Email</p>
@@ -126,7 +141,7 @@ const Staffs = () => {
                 }}
                 src={user.avatar}
                   
-                  alt="Product"
+                  alt="avatar"
                 />
               </div>
               <p className="text-sm text-black dark:text-white break-words w-11/12">
@@ -151,7 +166,7 @@ const Staffs = () => {
           </div>
           <div className="col-span-1 flex items-center">
           <p className="text-sm text-black dark:text-white break-words w-11/12">
-          {user.birthday?user.birthday:"Chưa nhập ngày sinh"}
+          {user.birthday?convertDMYFormat(user.birthday):"Chưa nhập ngày sinh"}
             </p>
           </div>
        
@@ -183,8 +198,6 @@ const Staffs = () => {
         >
           Next
         </button>
-
-        {/* Thêm ô nhập số trang */}
       </div>
     </div>
     </DefaultLayout>

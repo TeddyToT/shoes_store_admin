@@ -12,7 +12,7 @@ import Link from "next/link";
 const ProductOverview = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Product Overview" />
+      <Breadcrumb pageName="Tổng quan sản phẩm" />
       
       <Link
               href="/product/overview/add-product"

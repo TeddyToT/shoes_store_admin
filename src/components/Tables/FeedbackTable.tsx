@@ -8,38 +8,47 @@ import { Contexts } from "@/app/Contexts";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
+const formatDateTime = (dateTime) => {
+  const [date, time] = dateTime.split(" ");
+  const [year, month, day] = date.split("-");
 
-const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
-  const { orders, fetchOrders }: any = useContext(Contexts);
+  return `${day}/${month}/${year} ${time}`;
+};
+
+const FeedbackTable = ({ filterStatus, setFilterStatus }: any) => {
+  const { feedbacks, fetchFeedbacks }: any = useContext(Contexts);
   // console.log(orders);
 
-  const [reversedOrders, setReversedOrders] = useState([]);
+  const [reversedFeedbacks, setReversedFeedbacks] = useState([]);
 
   useEffect(() => {
-    if (orders.length > 0) {
-      setReversedOrders([...orders].reverse());
+    if (feedbacks.length > 0) {
+        setReversedFeedbacks([...feedbacks].reverse());
     }
-  }, [orders]);
+  }, [feedbacks]);
 
   const [searchInput, setSearchInput] = useState("");
-  const [searchOrders, setSearchOrders] = useState([]);
+  const [searchFeedbacks, setSearchFeedbacks] = useState([]);
 
   useEffect(() => {
-    let filtered = reversedOrders;
+    let filtered = reversedFeedbacks;
 
     if (filterStatus !== "all") {
-      filtered = reversedOrders.filter((order) => order.state === filterStatus);
+      filtered = reversedFeedbacks.filter((feedback) => feedback.isHandle === filterStatus);
     }
 
     const searchQuery = searchInput.trim().toLowerCase();
-    const temp = filtered;
-    setSearchOrders(temp);
-  }, [searchInput, filterStatus, orders, reversedOrders]);
+    const temp = filtered.filter((feedback) =>
+        feedback.feedbackId.toLowerCase().includes(searchQuery),
+    );
+
+    setSearchFeedbacks(temp);
+  }, [searchInput, filterStatus, reversedFeedbacks]);
 
   const itemsPerPage = 8; // Số mục mỗi trang
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(searchOrders.length / itemsPerPage);
+  const totalPages = Math.ceil(searchFeedbacks.length / itemsPerPage);
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
@@ -65,44 +74,39 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
   const getPaginatedData = useCallback(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
 
-    return searchOrders.slice(startIndex, startIndex + itemsPerPage);
-  }, [currentPage, searchOrders]);
+    return searchFeedbacks.slice(startIndex, startIndex + itemsPerPage);
+  }, [currentPage, searchFeedbacks]);
 
-  const handleDeleteOrder = (orderId: string) => {
+  const handleDeleteFeedback = (id: string) => {
     axios
-      .delete(`http://localhost/be-shopbangiay/api/invoice.php`, {
-        data: { invoiceId: orderId.toString() },
-      })
-      .then((res) => {
-        if (res.data.success == false) {
-          toast.error("Xóa đơn hàng thất bại", {
+      .delete(
+        `http://localhost/be-shopbangiay/api/feedback.php`,{
+          data: { feedbackId: id.toString() }
+        }
+      )
+      
+      .then((response) => {
+        if (response.data.success == true) {
+          toast.success("Xóa góp ý thành công", {
             position: "top-right",
             autoClose: 2000,
           });
-          fetchOrders();
+          fetchFeedbacks();
         } else {
-          toast.success("Xóa đơn hàng thành công", {
+          console.log(response.data);
+          toast.error("Xóa góp ý thất bại", {
             position: "top-right",
             autoClose: 2000,
           });
-          fetchOrders();
         }
       })
       .catch((error) => {
-        console.error("Error deleting order:", error);
-        toast.error("Đã xảy ra lỗi khi xóa đơn hàng", {
+        console.error("Error deleting product:", error);
+        toast.error("Đã xảy ra lỗi khi xóa góp ý", {
           position: "top-right",
           autoClose: 2000,
         });
       });
-  };
-  
-
-  const formatDateTime = (dateTime) => {
-    const [date, time] = dateTime.split(" ");
-    const [year, month, day] = date.split("-");
-
-    return `${day}/${month}/${year} ${time}`;
   };
   return (
     <div className=" relative overflow-hidden rounded-md border border-gray-400  bg-white pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -110,19 +114,19 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
-              <th className="w-1/4 px-4 py-4 font-medium text-black dark:text-white xl:pl-6">
-                Khách hàng
+              <th className="min-w-[175px] px-4 py-4 font-medium text-black dark:text-white xl:pl-6">
+                Tên người gửi
               </th>
-              <th className="w-1/2 px-4 py-4 text-center font-medium text-black dark:text-white">
-                Sản phẩm
+              <th className="flex min-w-[150px]  px-4 py-4 font-medium text-black dark:text-white">
+                Email
               </th>
-              <th className="w-1/12 px-4 py-4 text-center font-medium text-black dark:text-white">
-                Thời gian đặt
+              <th className="min-w-[120px] px-4 py-4 font-medium text-black dark:text-white">
+                Số điện thoại
               </th>
-              <th className="w-1/12 px-4 py-4 font-medium text-black dark:text-white">
-                Thanh toán
+              <th className="min-w-[120px] px-4 py-4 font-medium text-black text-center dark:text-white">
+                Thời gian gửi
               </th>
-              <th className="w-1/12 px-4 py-4 font-medium text-black dark:text-white">
+              <th className="min-w-[120px] text-center px-4 py-4 font-medium text-black dark:text-white">
                 Trạng thái
               </th>
               <th className="px-4 py-4 font-medium text-black dark:text-white">
@@ -131,127 +135,57 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
             </tr>
           </thead>
           <tbody>
-            {getPaginatedData().map((orderItem, key) => (
+            {getPaginatedData().map((item, key) => (
               <tr
                 className={key % 2 != 0 ? "bg-gray-50 dark:bg-gray-800" : ""}
-                key={orderItem._id}
+                key={item.feedbackId}
               >
                 <td className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-6">
                   <h5 className="font-medium text-black dark:text-white">
-                    {orderItem.name ? orderItem.name : "Không tên"}
+                    {item.name
+                      ? item.name
+                      : "Không tên"}
                   </h5>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="text-black dark:text-white">
-                    {orderItem.items.map((item) => (
-                      <div
-                        className="flex flex-row justify-between border-b-2 py-2"
-                        key={item.productId}
-                      >
-                        {item.productId == null ? (
-                          <div className="flex basis-3/4 flex-row items-center gap-2">
-                            <div className="flex flex-col">
-                              <p className="text-ellipsis">Product đã bị xóa</p>
-                              {/* <p className="capitalize">Size: {item.size}</p> */}
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="flex basis-3/4 flex-row items-center gap-2">
-                            {item.productId.mainImage && (
-                              <Image
-                                src={item.productId.mainImage}
-                                alt={item.productId.name}
-                                width={60}
-                                height={60}
-                              />
-                            )}
-                            <div className="flex flex-col">
-                              <p className="text-ellipsis">
-                                {item.productId.name}
-                              </p>
-                              <p className="capitalize">Size: {item.size}</p>
-                            </div>
-                          </div>
-                        )}
+                  {item.email
+                      ? item.email
+                      : "Không mail"}
+                  </div>
+                  
+                </td>
+                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                  <div className="text-black dark:text-white">
+                  {item.phone
+                      ? item.phone
+                      : "Không mail"}
+                  </div>
+                  
+                </td>
 
-                        <div className="flex w-1/3 flex-col items-start gap-2 ">
-                          <div className="flex w-full flex-row justify-between">
-                            <p>Số lượng:</p>
-                            <p>{item.quantity}</p>
-                          </div>
-                          <div className="flex w-full flex-row justify-between">
-                            <p>Giá:</p>
-                            <p>
-                              {(
-                                item.quantity *
-                                (item.productId.price -
-                                  (item.productId.price *
-                                    item.productId.discount) /
-                                    100)
-                              ).toLocaleString("vi-VN")}
-                              đ
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex w-1/3 justify-between place-self-end break-words">
-                    <p className="mt-3 ml-3 text-base font-semibold">Tổng:</p>
-                    <p className="mt-3 overflow-hidden break-words text-base font-semibold">
-                      {Number(orderItem.totalPrice).toLocaleString("vi-VN")}đ
-                    </p>
-                  </div>
-                </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p className="text-center capitalize">
-                    {orderItem.orderDate
-                      ? formatDateTime(orderItem.orderDate)
-                      : "Test"}
+                    {item.createdAt ? formatDateTime(item.createdAt) : "Test"}
                   </p>
                 </td>
-                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                  <p className="text-center capitalize">
-                    {orderItem.paymentMethod ? orderItem.paymentMethod : "Test"}
-                  </p>
-                </td>
-                <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                <td className="border-b text-center border-[#eee] px-4 py-5 dark:border-strokedark">
                   <p
                     className={`inline-flex rounded-full bg-opacity-10 font-medium  capitalize ${
-                      orderItem.state === "Done"
+                        item.isHandle === "1"
                         ? " text-success"
-                        : orderItem.state === "Cancel"
-                          ? " text-danger"
-                          : orderItem.state === "Shipping"
-                            ? " text-zinc-500"
-                            : orderItem.state === "Doing"
-                              ? " text-blue-500"
-                              : orderItem.state === "Confirming"
-                                ? " text-orange-500"
-                                : orderItem.state === "Pending"
-                                  ? " text-warning"
-                                  : " text-danger"
+                        : " text-danger"
                     }`}
                   >
-                    {orderItem.state === "Done"
-                        ? " Hoàn thành"
-                        : orderItem.state === "Cancel"
-                          ? " Đã hủy"
-                          : orderItem.state === "Shipping"
-                            ? " Đang vận chuyển"
-                            : orderItem.state === "Doing"
-                              ? " text-blue-500"
-                              : orderItem.state === "Confirming"
-                                ? " Đang xác nhận"
-                                : orderItem.state === "Pending"
-                                  ? " Đang chờ xử lý"
-                                  : " Chưa có"}
+                    {item.isHandle === "1"
+                        ? " Đã ghi nhận"
+                        : " Đợi xử lý"}
                   </p>
                 </td>
                 <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
                     <Link
-                      href={`/order/management/edit-order/${orderItem.invoiceId}`}
+                      href={`/feedbacks/edit-feedback/${item.feedbackId}`}
                       className="hover:text-primary"
                     >
                       <ModeEditIcon />
@@ -260,10 +194,10 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
                       onClick={() => {
                         if (
                           window.confirm(
-                            "Bạn có chắc chắn muốn xóa voucher này không?",
+                            "Bạn có chắc chắn muốn xóa góp ý này không?",
                           )
                         ) {
-                          handleDeleteOrder(orderItem.invoiceId);
+                          handleDeleteFeedback(item.feedbackId);
                         }
                       }}
                       className="hover:text-primary"
@@ -334,4 +268,4 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
   );
 };
 
-export default OrderTable;
+export default FeedbackTable;

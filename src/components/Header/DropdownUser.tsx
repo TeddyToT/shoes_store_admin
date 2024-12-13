@@ -1,15 +1,21 @@
-import { useState } from "react";
+
+import { useState, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
-import HandymanIcon from '@mui/icons-material/Handyman';
+import { Contexts } from "@/app/Contexts";
+import { useRouter, usePathname  } from "next/navigation";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { toast } from "react-toastify";
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const {userDetail, setUserDetail} = useContext(Contexts)
+  const router = useRouter();
+  const pathname = usePathname();
   return (
     <ClickOutside onClick={() => setDropdownOpen(false)} className="relative">
       <Link
-        onClick={() => setDropdownOpen(!dropdownOpen)}
+        onClick={() => {userDetail?(setDropdownOpen(!dropdownOpen)):(setDropdownOpen(false))} }
         className="flex items-center gap-4"
         href="#"
       >
@@ -17,7 +23,7 @@ const DropdownUser = () => {
           <span className="block text-sm font-medium text-black dark:text-white">
             Shoes Store 
           </span>
-          <span className="block text-xs">Admin</span>
+          <span className="block text-xs">{userDetail?userDetail.role:""}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -53,17 +59,62 @@ const DropdownUser = () => {
       {/* <!-- Dropdown Start --> */}
       {dropdownOpen && (
         <div
-          className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
+          className={`absolute right-0 mt-4 flex w-50 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark`}
         >
-          <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
-           
-            <li>
+          <ul className="flex  flex-col gap-5 border-b border-stroke px-6 py-5 dark:border-strokedark">
+    
+            <li className="">
               <p
                 
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out  lg:text-base"
               >
-               <HandymanIcon/>
-                Version 1.0
+               
+               {userDetail?userDetail.name:""}
+              </p>
+            </li>
+           
+            <li className="hover:cursor-pointer " 
+           onClick={() => {
+            localStorage.clear();
+            if (pathname === "/") {
+              toast.success('Đăng xuất thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+
+                });
+                setUserDetail(null)
+                router.push("/auth/signin"); 
+
+              
+            } else {
+              toast.success('Đăng xuất thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+
+                });
+                setUserDetail(null)
+                router.push("/"); 
+              
+            }
+          }}>
+              <p
+                
+                className=" hover:cursor-pointer flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+              >
+               <LogoutIcon/>
+                Đăng xuất
               </p>
             </li>
           </ul>

@@ -28,7 +28,7 @@ const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCa
   return (
     <div className="mb-4.5">
       <label className="mb-2.5 block text-black dark:text-white">
-        Product Category
+        Thể loại
       </label>
 
       <div className="capitalize relative z-20 bg-transparent dark:bg-form-input">
@@ -40,7 +40,7 @@ const SelectCategoryOption: React.FC<SelectCategoryOptionProps> = ({ value, onCa
           }`}
         >
           <option value="" disabled className="text-body dark:text-bodydark">
-            Select product category
+            Chọn thể loại sản phẩm
           </option>
           {categories.map((option: any) => (
             <option

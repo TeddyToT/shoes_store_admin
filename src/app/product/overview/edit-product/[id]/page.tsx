@@ -218,11 +218,10 @@ const EditProduct = ({ params }: { params: { id: string } }) => {
         toast.success("Sửa sản phẩm thành công", {
           position: "top-right",
           autoClose: 2000,
-          onClose: () => {
-            fetchProducts();
-            router.push("/product/overview");
-          },
+
         });
+        fetchProducts();
+        router.push("/product/overview");
         
       })
       .catch((err) => {
@@ -238,8 +237,8 @@ const EditProduct = ({ params }: { params: { id: string } }) => {
       <Breadcrumb
         items={[
           { name: "Dashboard", href: "/" },
-          { name: "Product Overview", href: "/product/overview" },
-          { name: "Edit Product" },
+          { name: "Tổng quan sản phẩm", href: "/product/overview" },
+          { name: "Sửa sản phẩm" },
         ]}
       />
       <div className="flex flex-col gap-10">

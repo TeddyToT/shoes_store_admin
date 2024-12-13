@@ -138,10 +138,9 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
           toast.success("Sửa trạng thái đơn hàng thành công", {
             position: "top-right",
             autoClose: 2000, 
-            onClose: () => {
-              router.push("/order/management");
-            }
+
           });
+          router.push("/order/management");
           }
   })
       .catch((err) => {

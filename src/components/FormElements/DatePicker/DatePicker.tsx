@@ -26,13 +26,12 @@ const DatePicker: React.FC<DatePickerProps> = ({ title, value, onDateChange }) =
       },
     });
 
-    // Cleanup để tránh trùng lặp khi prop `value` thay đổi
     return () => fp.destroy();
   }, [value, onDateChange]);
 
   return (
-    <div>
-      <label className="mb-3 block text-sm font-medium text-black dark:text-white">
+    <div className="mb-4.5">
+      <label className="mb-3 block  font-semibold text-black dark:text-white">
         {title}
       </label>
       <div className="relative">

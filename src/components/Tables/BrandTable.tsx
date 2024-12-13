@@ -119,7 +119,10 @@ const BrandTable = () => {
                     <button 
                     onClick={() => {
                       if (window.confirm("Bạn có chắc chắn muốn xóa brand này không?")) {
-                        handleDeleteCategory(brand.manufacturerId);
+                        if (window.confirm("Xóa hãng giày sẽ xóa tất cả các giày trong hãng. Bạn có chắc muốn xóa không?")){
+                          handleDeleteCategory(brand.manufacturerId);
+                        }
+                        
                       }
                     }}
                     className="hover:text-primary">

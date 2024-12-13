@@ -95,12 +95,12 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
   return (
     <div className="bg-white shadow rounded-lg p-4 dark:bg-gray-800">
       <h3 className="text-sm font-medium text-gray-500 mb-4 dark:text-gray-400">
-        Revenue Over Time
+        Doanh thu 
       </h3>
 
       {/* Nút lọc */}
       <div className="mb-4 flex items-center">
-        <label className="mr-2 text-gray-600 dark:text-gray-300">Filter: </label>
+        <label className="mr-2 text-gray-600 dark:text-gray-300">Lọc: </label>
         <select
           value={timeFilter}
           onChange={(e) => {
@@ -110,9 +110,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
           }}
           className="border p-2 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
         >
-          <option value="day">Day</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
+          <option value="day">Ngày</option>
+          <option value="month">Tháng</option>
+          <option value="year">Năm</option>
         </select>
 
         {/* Chọn tuần nếu filter là "day" */}
@@ -122,7 +122,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
             onChange={(option) => setSelectedWeek(option ? option.value : "")}
             options={weekOptions}
             className="ml-4 w-1/3"
-            placeholder="Select a Week"
+            placeholder="Chọn tuần"
             isSearchable
           />
         )}

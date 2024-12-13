@@ -40,7 +40,7 @@ const OrdersCard: React.FC<OrdersCardProps> = ({
   };
 
   return (
-    <div className="bg-white shadow rounded-lg p-4 flex justify-between items-center dark:bg-gray-800">
+    <div className="bg-white md:w-1/4 w-full shadow rounded-lg p-4 flex justify-between items-center dark:bg-gray-800">
       {/* Biểu tượng và thông tin */}
       <div className="flex items-center">
         <div className="text-blue-500 p-3 rounded-lg bg-blue-100 dark:bg-blue-900">

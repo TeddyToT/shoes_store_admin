@@ -7,6 +7,7 @@ export const Contexts = createContext({})
 export const AppProvider = ({ children }) => {
     // const[email, setEmail] = useState("")
     const [users, setUsers] = useState([]);
+    const [userDetail, setUserDetail] = useState(null);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [manufacturers, setManufacturers] = useState([]);
@@ -113,6 +114,18 @@ export const AppProvider = ({ children }) => {
                 console.log(err);
             });
     };
+    const fetchUserDetail = () => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            axios.get(`http://localhost/be-shopbangiay/api/user.php?userId=${userId}`)
+                .then((res) => {
+                    setUserDetail(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -122,6 +135,8 @@ export const AppProvider = ({ children }) => {
         fetchOrders();
         fetchShop();
         fetchBanners();
+        fetchUserDetail();
+        fetchFeedbacks();
     }, []);
     
     return (
@@ -129,6 +144,7 @@ export const AppProvider = ({ children }) => {
             products, setProducts, fetchProducts,
             categories, setCategories, fetchCategories, 
             users, setUsers, fetchUsers,
+            userDetail,setUserDetail, fetchUserDetail,
             manufacturers, setManufacturers, fetchManufacturers,
             orders, setOrders, fetchOrders,
             feedbacks, setFeedbacks, fetchFeedbacks,

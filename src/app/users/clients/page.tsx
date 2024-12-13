@@ -29,7 +29,10 @@ const CustomerTable = () => {
     setSearchUsers(temp);
   }, [searchInput, users]);
   
-
+  function convertDMYFormat(date: string): string {
+    const [year, month, day] = date.split("/");
+    return `${day}/${month}/${year}`;
+  }
   const itemsPerPage = 6; // Số mục mỗi trang
     const [currentPage, setCurrentPage] = useState(1);
   
@@ -151,7 +154,7 @@ const CustomerTable = () => {
           </div>
           <div className="col-span-1 flex items-center">
           <p className="text-sm text-black dark:text-white break-words w-11/12">
-          {user.birthday?user.birthday:"Chưa nhập ngày sinh"}
+          {user.birthday?convertDMYFormat(user.birthday):"Chưa nhập ngày sinh"}
             </p>
           </div>
        

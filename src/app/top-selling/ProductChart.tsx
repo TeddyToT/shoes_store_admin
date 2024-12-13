@@ -11,12 +11,12 @@ const ProductChart: React.FC<ProductChartProps> = ({ data }) => {
 
 
 
-  const valueFormatter = (value) => `${value} sold`;
+  const valueFormatter = (value) => `${value} đã bán`;
 
   return (
     <div className="rounded-lg bg-white p-4 shadow h-auto dark:bg-gray-800">
       <h3 className="mb-4 text-sm font-medium text-gray-500 dark:text-gray-300">
-      Best-Selling Chart
+      Sản phẩm bán chạy
       </h3>
       <div className="w-full h-auto">
         <BarChart

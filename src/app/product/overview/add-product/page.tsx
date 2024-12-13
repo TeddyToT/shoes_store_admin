@@ -229,8 +229,8 @@ const AddProduct = () => {
       <Breadcrumb
         items={[
           { name: "Dashboard", href: "/" },
-          { name: "Product Overview", href: "/product/overview" },
-          { name: "Add Product" },
+          { name: "Tông quan sản phẩm", href: "/product/overview" },
+          { name: "Thêm sản phẩm" },
         ]}
       />
       <div className="flex flex-col gap-10">
@@ -301,13 +301,13 @@ const AddProduct = () => {
               />
               <div className="mb-4.5">
                 <label className="mb-3 block  font-medium text-black dark:text-white">
-                  Product Description
+                  Mô tả
                 </label>
                 <input
                   type="text"
                   value={des}
                   onChange={(e) => setDes(e.target.value)}
-                  placeholder="Enter product description"
+                  placeholder="Nhập mô tả sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
@@ -337,8 +337,8 @@ const AddProduct = () => {
               </div>
               <div className="mb-4.5">
                 <label className="mb-3 block font-medium text-black dark:text-white">
-                  Attach Product Image (
-                  {images.length < 4 ? "4 ảnh" : "Đã đủ 4 ảnh"})
+                  Ảnh sản phẩm (
+                  {images.length < 4 ? '4 ảnh - 1 ảnh "main"' : "Đã đủ 4 ảnh"})
                 </label>
 
                 <div className="relative mt-2 flex items-center justify-center">
@@ -391,7 +391,7 @@ const AddProduct = () => {
                 onClick={handleSubmit}
                 className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
               >
-                Add
+                Thêm
               </button>
             </div>
           </form>

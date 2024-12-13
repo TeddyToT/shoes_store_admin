@@ -21,7 +21,11 @@ const Overview = () => {
   const totalOrders = orders.length;
 
   // Tổng doanh thu
-  const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+  const totalRevenue = orders
+  .sort((a, b) => new Date(a.orderDate.replace(" ", "T")).getTime() - new Date(b.orderDate.replace(" ", "T")).getTime()) // Sắp xếp theo thời gian
+  .reduce((sum, order) => sum + Number(order.totalPrice), 0); // Tính tổng doanh thu
+
+console.log(totalRevenue);
 
   // Trạng thái đơn hàng
   const statusCounts = orders.reduce((acc, order) => {
@@ -30,21 +34,56 @@ const Overview = () => {
   }, {} as Record<string, number>);
 
   // Cập nhật statusData với label tương ứng với deliveryStatus
-  const statusData = Object.keys(statusCounts).map((status) => ({
-    label: status.charAt(0).toUpperCase() + status.slice(1),  // Viết hoa chữ cái đầu tiên
-    value: statusCounts[status],  // Số lượng đơn hàng
-  }));
+  const statusData = Object.keys(statusCounts).map((status) => {
+    let label = "";
+  
+    switch (status.toLowerCase()) {
+      case "pending":
+        label = "Đang chờ xử lý";
+        break;
+      case "shipping":
+        label = "Đang vận chuyển";
+        break;
+      case "confirming":
+        label = "Đang xác nhận";
+        break;
+      case "cancel":
+        label = "Đã hủy";
+        break;
+      case "done":
+        label = "Hoàn thành";
+        break;
+      default:
+        label = "Không xác định"; // Xử lý trường hợp trạng thái không nằm trong danh sách
+    }
+  
+    return {
+      label,
+      value: statusCounts[status], // Số lượng đơn hàng
+    };
+  });
+  
 
   // Nhóm đơn hàng theo ngày và tính tổng doanh thu cho mỗi ngày
-  const revenueData = orders.reduce((acc, order) => {
+  const revenueData = orders
+  .reduce((acc, order) => {
     const date = new Date(order.orderDate.replace(" ", "T")).toLocaleDateString('en-GB'); // Định dạng ngày theo 'DD/MM/YYYY'
-    if (!acc[date]) {
-      acc[date] = { date, revenue: 0 };
+    const existingEntry = acc.find((entry) => entry.date === date);
+    if (existingEntry) {
+      existingEntry.revenue += Number(order.totalPrice); // Cộng thêm nếu ngày đã tồn tại
+    } else {
+      acc.push({ date, revenue: Number(order.totalPrice) }); // Thêm mục mới nếu chưa tồn tại
     }
-    acc[date].revenue += Number(order.totalPrice); // Chuyển totalPrice thành số trước khi cộng
     return acc;
-  }, {} as Record<string, { date: string; revenue: number }>);
-  
+  }, [] as { date: string; revenue: number }[])
+  .sort((a, b) => {
+    const dateA = new Date(a.date.split('/').reverse().join('/')); // Chuyển 'DD/MM/YYYY' thành 'YYYY/MM/DD'
+    const dateB = new Date(b.date.split('/').reverse().join('/'));
+    return dateA.getTime() - dateB.getTime(); // Sắp xếp cũ nhất trước
+  });
+
+console.log(revenueData);
+
 
   // Chuyển dữ liệu nhóm theo ngày thành mảng
   const revenueChartData = Object.values(revenueData).map((data) => ({
@@ -79,24 +118,24 @@ const yesterdayOrders = orders.filter((order) =>
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Overview" />
+      <Breadcrumb pageName="Tổng quan" />
 
-      <div className="bg-gray-100 min-h-screen p-8 dark:bg-gray-900">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="bg-gray-100 min-h-screen dark:bg-[#1b222c]">
+  <div className="flex flex-col md:flex-row gap-4 mb-4">
   <OrdersCard
-  title="Total Orders Today"
+  title="Tổng đơn hàng hôm nay"
   current={todayOrders}
   previous={yesterdayOrders}
   icon={<ShoppingCartIcon className="text-blue-500" />}
 />
     <OverviewRevenue
-      title="Revenue"
+      title="Doanh thu"
       value={`${totalRevenue.toLocaleString()} VND`}
       icon={<AttachMoneyIcon className="text-green-500" />}
       orders={orders}  // Truyền orders vào OverviewCard
     />
     <OverviewCard
-      title="Customers"
+      title="Khách hàng"
       value={users.length}
       icon={<PersonIcon className="text-purple-500" />}
     />

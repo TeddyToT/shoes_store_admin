@@ -73,11 +73,14 @@ const ProductTracking = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Product Tracking" />
+      <Breadcrumb pageName="Theo dõi sản phẩm" />
       <div className="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
-        <div className="w-full">
+        {topSellingProductsToday.length > 0?
+        (
+          <div className="w-full">
+            <div className="w-full">
           <h2 className="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
-            Best-Selling Products Today
+            Bán chạy nhất hôm nay
           </h2>
         </div>
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -90,10 +93,17 @@ const ProductTracking = () => {
             />
           ))}
         </div>
+            </div>
+        )
+      :
+      (<div>
+        </div>)
+      }
+        
 
         <div className="w-full">
           <h2 className="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
-            Best-Selling Products
+            Sản phẩm bán chạy nhất
           </h2>
         </div>
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -108,7 +118,7 @@ const ProductTracking = () => {
 
         <div className="w-full">
           <h2 className="mb-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
-            Most Discounted Products
+            Sản phẩm được giảm giá nhiều nhất
           </h2>
         </div>
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">

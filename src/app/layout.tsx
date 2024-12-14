@@ -34,7 +34,7 @@ export default function RootLayout({
         <ToastContainer/>
         <AppProvider>
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
-          {loading ? <Loader /> : children}
+          {children}
         </div>
         </AppProvider>
       </body>

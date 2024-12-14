@@ -152,7 +152,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
 
 
-  //   console.log(discountValue);
+ 
 
   const handleStatusChange = (selectedStatus: string) => {
     setDeliveryStatus(selectedStatus);

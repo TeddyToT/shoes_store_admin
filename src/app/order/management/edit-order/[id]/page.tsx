@@ -165,8 +165,8 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
         <Breadcrumb
           items={[
             { name: "Dashboard", href: "/" },
-            { name: "Discount", href: "/discount" },
-            { name: "Edit Order" },
+            { name: "Đơn hàng", href: "/order/management" },
+            { name: "Sửa đơn hàng" },
           ]}
         />
         <div className="grid grid-cols-5 gap-8">
@@ -174,7 +174,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
                 <h3 className="font-medium text-black dark:text-white">
-                  Order Information
+                  Thông tin đơn hàng
                 </h3>
               </div>
               <div className="p-7">
@@ -208,13 +208,13 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                             <p className="capitalize">{item.size}</p>
                               </div>
                               <div className="flex flex-row justify-between w-full">
-                            <p className="capitalize">Quantity: </p>
+                            <p className="capitalize">Số lượng: </p>
                             <p className="capitalize">{item.quantity}</p>
                               </div>
                               {item.productId.discount != 0?(
                                 <div className="flex flex-col justify-between w-full gap-2">
                                   <div className="flex flex-row justify-between w-full">
-                                <p className="capitalize">Discount: </p>
+                                <p className="capitalize">Giảm giá: </p>
                                 <p className="capitalize">{item.productId.discount}%</p>
                                   </div>
                                 <div className="flex flex-row justify-between w-full">
@@ -255,7 +255,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
             <div className=" mb-4.5 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
                 <h3 className="font-medium text-black dark:text-white">
-                Receiver Infomation
+                Thông tin người nhận
                 </h3>
               </div>
             
@@ -267,7 +267,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                         className="mb-3 block text-sm font-medium text-black dark:text-white"
                         htmlFor="fullName"
                       >
-                        Name
+                        Tên người nhận
                       </label>
                       <div
                         className="relative flex w-full flex-row
@@ -283,7 +283,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
                     <div className="w-full sm:w-1/2">
                       <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                        Phone Number
+                        Số điện thoại
                       </label>
                       <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
                       {phone?phone:"No Phone"}
@@ -293,7 +293,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
                   <div className="mb-5.5 w-full">
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                      Address
+                      Địa chỉ
                     </label>
                     <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
                       {address?address:"No Address"}
@@ -309,7 +309,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                   </div>
                   <div className="mb-5.5 w-full">
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                      Note
+                      Ghi chú
                     </label>
                     <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
                       {note?note:"No note"}
@@ -321,14 +321,14 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
             <div className="mb-4 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
               <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
                 <h3 className="font-medium text-black dark:text-white">
-                  Order Status
+                  Trạng thái đơn hàng
                 </h3>
               </div>
             
               <div className="p-7">
                   <div className="mb-5.5 w-full">
                     <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                      Current Payment Status
+                      Phương thức thanh toán
                     </label>
                     <p className="capitalize w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
                       {paymentMethod}
@@ -336,10 +336,23 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                   </div>
                   <div className="mb-5.5 w-full">
                     <label className=" mb-3 block text-sm font-medium text-black dark:text-white">
-                      Current Delivery Status
+                      Trạng thái đơn hàng hiện tại
                     </label>
                     <p className="capitalize w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                    {currentDeliveryStatus}
+                    
+                    {currentDeliveryStatus === "Done"
+                        ? " Hoàn thành"
+                        : currentDeliveryStatus === "Cancel"
+                          ? " Đã hủy"
+                          : currentDeliveryStatus === "Shipping"
+                            ? " Đang vận chuyển"
+                            : currentDeliveryStatus === "Doing"
+                              ? " text-blue-500"
+                              : currentDeliveryStatus === "Confirming"
+                                ? " Xác nhận"
+                                : currentDeliveryStatus === "Pending"
+                                  ? " Đang chờ xử lý"
+                                  : " Chưa có"}
                     </p>
                   </div>
                   <div className="mb-4.5">

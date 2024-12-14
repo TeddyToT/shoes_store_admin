@@ -63,13 +63,13 @@ const ProductCategoryTable = () => {
       })
       .then((response) => {
         if (response.data.success == true) {
-          toast.success("Xóa category thành công", {
+          toast.success("Xóa thể loại thành công", {
             position: "top-right",
             autoClose: 2000
           })
           fetchCategories();
         } else {
-          toast.error("Xóa category thất bại", {
+          toast.error("Xóa thể loại thất bại", {
             position: "top-right",
             autoClose: 2000
           })
@@ -77,7 +77,7 @@ const ProductCategoryTable = () => {
       })
       .catch((error) => {
         console.error("Error deleting product:", error);
-        toast.error("Đã xảy ra lỗi khi xóa category", {
+        toast.error("Đã xảy ra lỗi khi xóa thể loại", {
           position: "top-right",
           autoClose: 2000
         })
@@ -96,7 +96,7 @@ const ProductCategoryTable = () => {
           value={searchInput}
           onChange={(e)=>setSearchInput(e.target.value)}
             type="text"
-            placeholder="Type to search..."
+            placeholder="Tìm tên thể loại..."
             className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
           />
         </div>

@@ -13,7 +13,7 @@ const TablesPage = () => {
   };
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Order Management" />
+      <Breadcrumb pageName="Quản lý đơn hàng" />
 
       <div className="flex items-center justify-end gap-5 rounded-md p-2 mb-4 dark:bg-meta-4">
         <button
@@ -22,7 +22,7 @@ const TablesPage = () => {
         shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card 
         dark:bg-cyan-950 dark:text-warning dark:hover:bg-[#3d50e0] dark:hover:text-white"
         >
-          Pending
+          Đang chờ xử lý
         </button>
         <button
           onClick={() => toggleStatus("Confirming")}
@@ -30,7 +30,7 @@ const TablesPage = () => {
         shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card 
         dark:bg-cyan-950  dark:hover:bg-[#3d50e0] dark:hover:text-white"
         >
-          Confirming
+          Xác nhận
         </button>
         
         <button
@@ -39,7 +39,7 @@ const TablesPage = () => {
         shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card 
         dark:bg-cyan-950   dark:hover:bg-[#3d50e0] dark:hover:text-white"
         >
-          Shipping
+          Đang vận chuyển
         </button>
         <button
           onClick={() => toggleStatus("Done")}
@@ -47,7 +47,7 @@ const TablesPage = () => {
         shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card 
         dark:bg-cyan-950 dark:text-success  dark:hover:bg-[#3d50e0] dark:hover:text-white"
         >
-          Done
+          Hoàn thành
         </button>
         
           <button 
@@ -55,7 +55,7 @@ const TablesPage = () => {
           className=" text-danger rounded  px-3 py-1 font-medium  shadow-card 
           shadow-gray-400 hover:bg-slate-700 hover:text-white hover:shadow-card 
           dark:bg-cyan-950 dark:text-danger dark:hover:bg-[#3d50e0] dark:hover:text-white">            
-         Cancel
+         Hủy
           </button>
       </div>
       <div className="flex flex-col gap-10">

@@ -11,7 +11,7 @@ import Link from "next/link";
 const ProductCategory = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Product Category" />
+      <Breadcrumb pageName="Thể loại sản phẩm" />
 
       <Link
               href="/product/category/add-category"

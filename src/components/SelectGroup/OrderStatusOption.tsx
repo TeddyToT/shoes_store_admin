@@ -27,7 +27,7 @@ const OrderStatusOption: React.FC<OrderStatusOptionProps> = ({
   return (
     <div className="mb-4.5">
       <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-        Order Status
+        Cập nhật trạng thái đơn hàng
       </label>
       <div className="relative">
         <select
@@ -37,13 +37,13 @@ const OrderStatusOption: React.FC<OrderStatusOptionProps> = ({
           className="w-full appearance-none rounded border border-stroke bg-transparent px-5 py-3 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:focus:border-primary"
         >
           <option value="" disabled>
-            Select a status
+            Chọn trạng thái
           </option>
-          <option value="Pending">Pending</option>
-          <option value="Shipping">Shipping</option>
-          <option value="Confirming">Confirming</option>
-          <option value="Cancel">Cancel</option>
-          <option value="Done">Done</option>
+          <option value="Pending">Đang chờ xử lý</option>
+          <option value="Shipping">Đang vận chuyển</option>
+          <option value="Confirming">Xác nhận</option>
+          <option value="Cancel">Đã hủy</option>
+          <option value="Done">Hoàn thành</option>
 
         </select>
       </div>

@@ -14,7 +14,10 @@ import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import DatePicker from "@/components/FormElements/DatePicker/DatePicker";
 
 
-const AddStaff = () => {
+const EditStaff = ({ params }: { params: { id: string } }) => {
+    const { id } = params;
+
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password2, setPassword2] = useState("");
@@ -62,12 +65,14 @@ const AddStaff = () => {
       setImagePreview(previewUrl);
       
     }
+    console.log("image", image);
   };
 
 
 
 
   const handleRemoveImage = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("image", image);
     event.preventDefault();
     event.stopPropagation();
 
@@ -77,50 +82,29 @@ const AddStaff = () => {
 
     setImage(null);
     setImagePreview(null);
+    
   };
+  console.log("image xóa:", image);
+  useEffect(() => {
+    axios
+      .get(`http://localhost/be-shopbangiay/api/user.php?userId=` + id)
+      .then((res) => {
+        setName(res.data.name);
+        setBirthDate(res.data.birthday);
+        setPhone(res.data.phone);
+        setAddress(res.data.address);
+        setImage(res.data.avatar);
+        setImagePreview(res.data.avatar);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!userName) {
-      toast.warning("Chưa nhập tên đăng nhập", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    }
-    if (!password) {
-      toast.warning("Chưa nhập mật khẩu", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    }
-    if (!password2) {
-      toast.warning("Chưa nhập xác nhận mật khẩu", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    }
+
     if (!email) {
       toast.warning("Chưa nhập email", {
         position: "top-right",
@@ -137,31 +121,6 @@ const AddStaff = () => {
     if (!email.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,)
     ) {
       toast.warning("Email không hợp lệ", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    }
-    if (password != password2) {
-      toast.warning("Mật khẩu chưa trùng khớp", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: false,
-        progress: undefined,
-        theme: "light",
-      });
-      return;
-    } else if (password.length < 6) {
-      toast.warning("Yêu cầu mật khẩu hơn 6 kí tự", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -229,8 +188,7 @@ const AddStaff = () => {
         return;
     }
       const form = new FormData()
-      form.append("username", userName)
-      form.append("password", password)
+      form.append("userId", id)
       form.append("email", email)
       form.append("name", name)
       form.append("role", "Staff")
@@ -242,14 +200,14 @@ const AddStaff = () => {
       }
       setIsLoading(true)
     axios
-      .post("http://localhost/be-shopbangiay/api/user.php", form,{
+      .put("http://localhost/be-shopbangiay/api/user.php", form,{
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       })
       .then((res) => {
         if (res.data.success == false) {
-          toast.error("Thêm tài khoản nhân viên thất bại", {
+          toast.error("Sửa tài khoản nhân viên thất bại", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
@@ -261,7 +219,7 @@ const AddStaff = () => {
           });
           setIsLoading(false)
         } else {
-          toast.success("Thêm tài khoản nhân viên thành công", {
+          toast.success("Sửa tài khoản nhân viên thành công", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
@@ -273,6 +231,7 @@ const AddStaff = () => {
           });
           setIsLoading(false)
           fetchUsers()
+          console.log("res", res.data);
           router.push("/users/staffs");
         }
       })
@@ -287,7 +246,7 @@ const AddStaff = () => {
   items={[
     { name: "Dashboard", href: "/" },
     { name: "Nhân viên", href: "/users/staffs" },
-    { name: "Thêm nhân viên" }
+    { name: "Sửa nhân viên" }
   ]}
 />
       <div className="flex flex-col gap-10">
@@ -296,18 +255,7 @@ const AddStaff = () => {
 
           <form action="#">
             <div className="p-6.5">
-              <div className="mb-4.5">
-                <label className="mb-3 block  font-semibold text-black dark:text-white">
-                  Tên tài khoản
-                </label>
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Nhập tên tài khoản"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                />
-              </div>
+           
 
               <div className="mb-4.5">
                 <label className="mb-3 block  font-semibold text-black dark:text-white">
@@ -322,58 +270,6 @@ const AddStaff = () => {
                 />
               </div>
 
-              <div className="mb-4.5">
-                <label className="mb-3 block font-semibold text-black dark:text-white">
-                  Mật khẩu
-                </label>
-                <div className=" relative flex w-full items-center">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Nhập mật khẩu"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  />
-                  {password && (
-                    <div
-                      className="absolute right-4 cursor-pointer"
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="mb-4.5">
-                <label className="mb-3 block font-semibold text-black dark:text-white">
-                  Nhập lại mật khẩu
-                </label>
-                <div className=" relative flex w-full items-center">
-                  <input
-                    type={showPassword2 ? "text" : "password"}
-                    value={password2}
-                    onChange={(e) => setPassword2(e.target.value)}
-                    placeholder="Nhập lại mật khẩu"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  />
-                  {password && (
-                    <div
-                      className="absolute right-4 cursor-pointer"
-                      onClick={togglePasswordVisibility2}
-                    >
-                      {showPassword2 ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <VisibilityOffIcon />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
               <div className="mb-4.5">
                 <label className="mb-3 block  font-semibold text-black dark:text-white">
                   Họ tên
@@ -415,7 +311,7 @@ const AddStaff = () => {
               </div>
               <div className="mb-4.5">
                 <label className="mb-3 block font-semibold text-black dark:text-white">
-                 Thêm avatar
+                 Sửa avatar
                 </label>
 
                 <div className="relative mt-2 flex items-center justify-center">
@@ -427,7 +323,7 @@ const AddStaff = () => {
                   />
 
                   <button className="w-1/2 rounded-lg bg-blue-500 px-5 py-3 text-white hover:bg-blue-600 focus:outline-none">
-                    Thêm ảnh avatar
+                    Sửa ảnh avatar
                   </button>
                 </div>
               </div>
@@ -457,7 +353,7 @@ const AddStaff = () => {
                 onClick={handleSubmit}
                 className="flex w-full justify-center rounded bg-primary p-3 font-semibold text-gray hover:bg-opacity-90"
               >
-                Thêm nhân viên
+                Sửa nhân viên
               </button>
             </div>
           </form>
@@ -467,4 +363,4 @@ const AddStaff = () => {
   );
 };
 
-export default AddStaff;
+export default EditStaff;

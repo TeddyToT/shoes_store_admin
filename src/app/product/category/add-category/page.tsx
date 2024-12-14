@@ -18,7 +18,7 @@ const AddCategory = () => {
     event.preventDefault();
     if (!categoryName) {
     
-      toast.warning("Please enter category name", {
+      toast.warning("Yêu cầu nhập tên thể loại", {
         position: "top-right",
         autoClose: 1500
       })
@@ -41,7 +41,7 @@ const AddCategory = () => {
           console.log(data);
           if (data.name)
           {
-            toast.success("Add category successfully", {
+            toast.success("Thêm thể loại thành công", {
               position: "top-right",
               autoClose: 2000,
             });
@@ -49,7 +49,7 @@ const AddCategory = () => {
             router.push("/product/category"); 
           }
           else{
-            toast.error("Add category failed", {
+            toast.error("Thêm thể loại thành thất bại", {
               position: "top-right",
               autoClose: 2000,
               
@@ -61,7 +61,7 @@ const AddCategory = () => {
   })
       .catch((err) => {
         console.error(err);
-        toast.error("Add category failed", {
+        toast.error("Thêm thể loại thành thất bại", {
           position: "top-right",
           autoClose: 2000,
         });
@@ -75,8 +75,8 @@ const AddCategory = () => {
       <Breadcrumb
   items={[
     { name: "Dashboard", href: "/" },
-    { name: "Product Category", href: "/product/category" },
-    { name: "Add Category" }
+    { name: "Thể loại sản phẩm", href: "/product/category" },
+    { name: "Thêm thể loại" }
   ]}
 />
       <div className="flex flex-col gap-10">
@@ -85,13 +85,13 @@ const AddCategory = () => {
             <div className="p-6.5">
               <div className="mb-4.5">
                 <label className="mb-3 block text-sm font-medium text-black dark:text-white">
-                  Category Name
+                  Tên thể loại
                 </label>
                 <input
                   type="text"
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
-                  placeholder="Enter category name"
+                  placeholder="Nhập tên thể loại"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
@@ -99,7 +99,7 @@ const AddCategory = () => {
               <button
               onClick={handleSubmit}
                className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90">
-                Add
+                Thêm
               </button>
             </div>
           </form>

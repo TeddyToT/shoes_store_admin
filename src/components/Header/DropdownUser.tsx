@@ -9,7 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { toast } from "react-toastify";
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const {userDetail, setUserDetail} = useContext(Contexts)
+  const {userDetail, setUserDetail, shop} = useContext(Contexts)
   const router = useRouter();
   const pathname = usePathname();
   return (
@@ -21,7 +21,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Shoes Store 
+            {shop.name}
           </span>
           <span className="block text-xs">{userDetail?userDetail.role:""}</span>
         </span>

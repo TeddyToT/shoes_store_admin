@@ -6,6 +6,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Contexts } from "@/app/Contexts";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 
 const CustomerTable = () => {
   const{users}: any = useContext(Contexts);
@@ -69,13 +70,9 @@ const CustomerTable = () => {
   return (
     <DefaultLayout>
 
-    
+<Breadcrumb pageName="Khách hàng" />
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-      <div className="px-4 py-6 md:px-6 xl:px-7.5">
-        <h4 className="text-xl font-semibold text-black dark:text-white">
-          Khách hàng
-        </h4>
-      </div>
+
       <div className=" inset-0 flex justify-start">
         <div className=" w-full px-4 py-5 sm:block">
           <form action="#" method="POST">
@@ -87,7 +84,7 @@ const CustomerTable = () => {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Type to search..."
+                placeholder="Tìm tên khách hàng..."
                 className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
               />
             </div>

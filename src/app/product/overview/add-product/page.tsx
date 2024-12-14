@@ -313,25 +313,25 @@ const AddProduct = () => {
               </div>
               <div className="mb-4.5">
                 <label className="blockfont-medium mb-3 text-black dark:text-white">
-                  Giá sản phẩm
+                  Giá sản phẩm (VNĐ)
                 </label>
                 <input
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="Enter product discount (Default value is 0)"
+                  placeholder="Nhập giá sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
               <div className="mb-4.5">
                 <label className="blockfont-medium mb-3 text-black dark:text-white">
-                  Product Discount
+                Giảm giá sản phẩm (%)
                 </label>
                 <input
                   type="number"
                   value={discount}
                   onChange={(e) => setDiscount(e.target.value)}
-                  placeholder="Enter product discount (Default value is 0)"
+                  placeholder="Nhập giảm giá sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>

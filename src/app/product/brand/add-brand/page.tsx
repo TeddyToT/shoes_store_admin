@@ -61,7 +61,7 @@ const AddBrand = () => {
   })
       .catch((err) => {
         console.error(err);
-        toast.error("Add category failed", {
+        toast.error("Thêm hãng thất bại", {
           position: "top-right",
           autoClose: 2000,
         });

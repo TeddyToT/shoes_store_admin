@@ -80,7 +80,7 @@ const BrandTable = () => {
           </button>
           <input
             type="text"
-            placeholder="Type to search..."
+            placeholder="Tìm tên hãng..."
             className="w-full bg-transparent pl-9 pr-4 font-medium focus:outline-none xl:w-11/12"
           />
         </div>

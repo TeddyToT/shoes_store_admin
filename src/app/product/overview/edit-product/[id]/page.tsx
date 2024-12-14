@@ -314,13 +314,13 @@ const EditProduct = ({ params }: { params: { id: string } }) => {
               />
               <div className="mb-4.5">
                 <label className="mb-3 block  font-medium text-black dark:text-white">
-                  Product Description
+                  Mô tả sản phẩm
                 </label>
                 <input
                   type="text"
                   value={des}
                   onChange={(e) => setDes(e.target.value)}
-                  placeholder="Enter product description"
+                  placeholder="Nhập mô tả sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
@@ -332,26 +332,26 @@ const EditProduct = ({ params }: { params: { id: string } }) => {
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="Enter product discount (Default value is 0)"
+                  placeholder="Nhập giá sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
               <div className="mb-4.5">
                 <label className="blockfont-medium mb-3 text-black dark:text-white">
-                  Product Discount
+                  Giảm giá sản phẩm (%)
                 </label>
                 <input
                   type="number"
                   value={discount}
                   onChange={(e) => setDiscount(e.target.value)}
-                  placeholder="Enter product discount (Default value is 0)"
+                  placeholder="Nhập giảm giá sản phẩm"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
               <div className="mb-4.5">
                 <label className="mb-3 block font-medium text-black dark:text-white">
-                  Attach Product Image (
-                  {images.length < 4 ? "4 ảnh" : "Đã đủ 4 ảnh"})
+                Ảnh sản phẩm (
+                  {images.length < 4 ? '4 ảnh - 1 ảnh "main"' : "Đã đủ 4 ảnh"})
                 </label>
 
                 <div className="relative mt-2 flex items-center justify-center">

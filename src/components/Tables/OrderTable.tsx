@@ -242,7 +242,7 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
                             : orderItem.state === "Doing"
                               ? " text-blue-500"
                               : orderItem.state === "Confirming"
-                                ? " Đang xác nhận"
+                                ? " Xác nhận"
                                 : orderItem.state === "Pending"
                                   ? " Đang chờ xử lý"
                                   : " Chưa có"}
@@ -260,7 +260,7 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
                       onClick={() => {
                         if (
                           window.confirm(
-                            "Bạn có chắc chắn muốn xóa voucher này không?",
+                            "Bạn có chắc chắn muốn xóa đơn hàng này không?",
                           )
                         ) {
                           handleDeleteOrder(orderItem.invoiceId);

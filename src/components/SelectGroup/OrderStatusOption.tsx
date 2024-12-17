@@ -40,10 +40,10 @@ const OrderStatusOption: React.FC<OrderStatusOptionProps> = ({
             Chọn trạng thái
           </option>
           <option value="Pending">Đang chờ xử lý</option>
-          <option value="Shipping">Đang vận chuyển</option>
           <option value="Confirming">Xác nhận</option>
-          <option value="Cancel">Đã hủy</option>
+          <option value="Shipping">Đang vận chuyển</option>
           <option value="Done">Hoàn thành</option>
+          <option value="Cancel">Đã hủy</option>
 
         </select>
       </div>

@@ -110,6 +110,58 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
 
   const handleEditSubmit = (event) => {
     event.preventDefault();
+    if (currentDeliveryStatus) {
+      if (currentDeliveryStatus == "Pending"){
+        if (deliveryStatus == "Shipping" || deliveryStatus == "Doing" || deliveryStatus == "Done"|| deliveryStatus == "Pending")
+          
+          {toast.warning("Sai tiến trình đơn hàng!", {
+            position: "top-right",
+            autoClose: 1500,
+          });
+          return;
+        }
+      }
+
+      if (currentDeliveryStatus == "Confirming"){
+        if (deliveryStatus == "Pending" || deliveryStatus == "Confirming"|| deliveryStatus == "Done")
+          {toast.warning("Sai tiến trình đơn hàng!", {
+            position: "top-right",
+            autoClose: 1500,
+          });
+          return;
+        }
+      }
+
+      if (currentDeliveryStatus == "Shipping"){
+        if (deliveryStatus == "Pending" || deliveryStatus == "Confirming" || deliveryStatus == "Doing"|| deliveryStatus == "Shipping")
+          {toast.warning("Sai tiến trình đơn hàng!", {
+            position: "top-right",
+            autoClose: 1500,
+          });
+          return;
+        }
+      }
+      if (currentDeliveryStatus == "Cancel"){
+        {toast.warning("Sai tiến trình đơn hàng!", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+        return;
+      }
+      }
+
+      if (currentDeliveryStatus == "Done"){
+        {toast.warning("Sai tiến trình đơn hàng!", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+        return;
+      }
+    }
+
+    }
+
+
     fetch(`http://localhost/be-shopbangiay/api/invoice.php`, {
       method: "PUT",
       headers: {
@@ -276,7 +328,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                         {/* <PermIdentityOutlinedIcon /> */}
 
                         <p className="text-black dark:text-white">
-                        {name?name:"Incognito"}
+                        {name?name:"Chưa có tên người nhận, cần liên hệ lại"}
                         </p>
                       </div>
                     </div>
@@ -286,7 +338,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                         Số điện thoại
                       </label>
                       <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                      {phone?phone:"No Phone"}
+                      {phone?phone:"Chưa có số điện thaoij, cần liên hệ lại"}
                       </p>
                     </div>
                   </div>
@@ -296,7 +348,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                       Địa chỉ
                     </label>
                     <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                      {address?address:"No Address"}
+                      {address?address:"Chưa có địa chỉ, cần liên hệ lại"}
                     </p>
                   </div>
                   <div className="mb-5.5 w-full">
@@ -312,7 +364,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                       Ghi chú
                     </label>
                     <p className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary">
-                      {note?note:"No note"}
+                      {note?note:""}
                     </p>
                   </div>
                 </form>
@@ -363,7 +415,7 @@ const EditOrder = ({ params }: { params: { id: string } }) => {
                     className="mt-4 rounded w-full bg-primary px-6 py-2 text-white hover:brightness-125"
                     onClick={handleEditSubmit}
                   >
-                    Edit
+                    Cập nhật
                   </button>
                 )}
               </div>

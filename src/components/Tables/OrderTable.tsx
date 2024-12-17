@@ -148,7 +148,7 @@ const OrderTable = ({ filterStatus, setFilterStatus }: any) => {
                         className="flex flex-row justify-between border-b-2 py-2"
                         key={item.productId}
                       >
-                        {item.productId == null ? (
+                        {item.productId == false ? (
                           <div className="flex basis-3/4 flex-row items-center gap-2">
                             <div className="flex flex-col">
                               <p className="text-ellipsis">Product đã bị xóa</p>

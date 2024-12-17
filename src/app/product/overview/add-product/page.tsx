@@ -124,42 +124,42 @@ const AddProduct = () => {
     const form = new FormData();
 
     if (!productName) {
-      toast.warning("Please enter product name", {
+      toast.warning("Yêu cầu nhập tên sản phẩm", {
         position: "top-right",
         autoClose: 1500,
       });
       return;
     }
     if (!categoryName) {
-      toast.warning("Please select category type", {
+      toast.warning("Yêu cầu chọn thể loại sản phẩm", {
         position: "top-right",
         autoClose: 1500,
       });
       return;
     }
     if (!des) {
-      toast.warning("Please enter product description", {
+      toast.warning("Yêu cầu nhập mô tả sản phẩm", {
         position: "top-right",
         autoClose: 1500,
       });
       return;
     }
     if (discount > 100 || discount < 0) {
-      toast.warning("Please enter discount value from 0 - 100", {
+      toast.warning("Yêu càu nhập giảm từ từ 0 - 100", {
         position: "top-right",
         autoClose: 1500,
       });
       return;
     }
     if (!images) {
-      toast.warning("Please add image for product", {
+      toast.warning("Yêu cầu thêm ảnh cho sản phẩm", {
         position: "top-right",
         autoClose: 1500,
       });
       return;
     }
     if (sizes.length === 0) {
-      toast.warning("Please add at least one size", {
+      toast.warning("Yêu cầu thêm size sản phẩm", {
         position: "top-right",
         autoClose: 1500,
       });
@@ -170,7 +170,7 @@ const AddProduct = () => {
       (item) => item.size === "" || item.quantity === ""
     );
     if (hasInvalidSize) {
-      toast.warning("Please fill out all size and quantity fields", {
+      toast.warning("Yêu cầu nhập đầy đủ thông tin về size và số lượng", {
         position: "top-right",
         autoClose: 1500,
       });

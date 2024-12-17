@@ -27,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+      <title>Admin Shoes Store</title>
           
           <link rel="shortcut icon" href="https://res.cloudinary.com/dxtslecpc/image/upload/v1733943866/shopbangiayuit/logo.png.png" />
         </head>

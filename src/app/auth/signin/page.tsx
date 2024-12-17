@@ -71,6 +71,20 @@ const SignIn: React.FC = () => {
             theme: "light",
             });
         } else {
+          if (res.data.role === "Customer")
+            {
+              toast.error('Khách hàng không thể đăng nhập vào trang quản lý', {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+                });
+                return;
+            } 
 
           toast.success('Đăng nhập thành công', {
             position: "top-right",

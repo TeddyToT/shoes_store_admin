@@ -108,6 +108,19 @@ const AddStaff = () => {
       });
       return;
     }
+    if (password.length < 6) {
+      toast.warning("Yêu cầu nhập mật khẩu ít nhất 6 ký tự", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     if (!password2) {
       toast.warning("Chưa nhập xác nhận mật khẩu", {
         position: "top-right",
@@ -409,7 +422,7 @@ const AddStaff = () => {
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Nhập email"
+                  placeholder="Nhập địa chỉ"
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>

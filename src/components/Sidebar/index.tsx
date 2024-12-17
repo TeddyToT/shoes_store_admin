@@ -29,8 +29,8 @@ const menuGroups = [
         label: "Dashboard",
         route: "#",
         children: [
-          { label: "Overview", route: "/overview" }, 
-          { label: "Top Selling", route: "/top-selling" }
+          { label: "Tổng quan", route: "/overview" }, 
+          { label: "Sản phẩm", route: "/top-selling" }
 
          ],
         

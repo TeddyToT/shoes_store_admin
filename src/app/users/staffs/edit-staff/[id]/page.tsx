@@ -89,6 +89,7 @@ const EditStaff = ({ params }: { params: { id: string } }) => {
     axios
       .get(`http://localhost/be-shopbangiay/api/user.php?userId=` + id)
       .then((res) => {
+        setEmail(res.data.email)
         setName(res.data.name);
         setBirthDate(res.data.birthday);
         setPhone(res.data.phone);

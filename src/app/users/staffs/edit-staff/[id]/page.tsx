@@ -47,6 +47,10 @@ const EditStaff = ({ params }: { params: { id: string } }) => {
     const [day, month, year] = date.split("/");
     return `${year}/${month}/${day}`;
   }
+  function convertInDateFormat(date: string): string {
+    const [year, month, day] = date.split("/");
+    return `${day}/${month}/${year}`;
+  }
   const handleDateChange = useCallback((date: string) => {
     setBirthDate(date);
     console.log("Ngày start đã chọn:", convertDateFormat(date)); 
@@ -91,7 +95,7 @@ const EditStaff = ({ params }: { params: { id: string } }) => {
       .then((res) => {
         setEmail(res.data.email)
         setName(res.data.name);
-        setBirthDate(res.data.birthday);
+        setBirthDate(convertInDateFormat(res.data.birthday));
         setPhone(res.data.phone);
         setAddress(res.data.address);
         setImage(res.data.avatar);
@@ -187,6 +191,24 @@ const EditStaff = ({ params }: { params: { id: string } }) => {
           theme: "light",
         });
         return;
+    }
+    const [day, month, year] = birthDate.split('/').map(Number);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dateToCompare = new Date(year, month - 1, day);
+    if(dateToCompare >= today)
+    {
+      toast.warning("Không thể chọn ngày lớn hơn hoặc bằng hôm nay", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
     }
       const form = new FormData()
       form.append("userId", id)

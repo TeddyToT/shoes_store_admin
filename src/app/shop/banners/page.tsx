@@ -59,14 +59,14 @@ const Banners = () => {
         await axios.delete("http://localhost/be-shopbangiay/api/banner.php", {
           data: { bannerId },
         });
-        toast.success("Banner deleted successfully", {
+        toast.success("Xóa banner thành công", {
           position: "top-right",
           autoClose: 1500,
         });
         fetchBanners();
         router.refresh();
       } catch (error) {
-        toast.error("Failed to delete banner", {
+        toast.error("Xóa banner thất bại", {
           position: "top-right",
           autoClose: 1500,
         });

@@ -196,7 +196,7 @@ const AddProduct = () => {
       })
       .then((res) => {
         if (res.data.success == false) {
-          toast.error("Add product fail", {
+          toast.error("Thêm sản phẩm thất bại, kiểm tra lại", {
             position: "top-right",
             autoClose: 1500,
           });
@@ -204,7 +204,7 @@ const AddProduct = () => {
           return;
         } else {
           fetchProducts();
-          toast.success("Add product sucessfully", {
+          toast.success("Thêm sản phẩm thành công", {
             position: "top-right",
             autoClose: 2000,
           });
@@ -215,7 +215,7 @@ const AddProduct = () => {
         console.log("Response:", res.data);
       })
       .catch((err) => {
-        toast.error("Add product fail", {
+        toast.error("Thêm sản phẩm thất bại, kiểm tra lại", {
           position: "top-right",
           autoClose: 1500,
         });

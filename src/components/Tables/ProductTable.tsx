@@ -134,7 +134,7 @@ const ProductTable = () => {
         </div>
       </div>
 
-      {getPaginatedData().reverse().map((product: any, key) => (
+      {getPaginatedData().map((product: any, key) => (
         <div
           className={
             key % 2 != 0
